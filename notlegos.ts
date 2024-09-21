@@ -1,7 +1,7 @@
 // NotLegos Blocks
 
 //% block="Not LEGOs" color=#0031AF weight=1000 icon="\uf3a5"
-//% groups=['MP3",'Display', 'Laser', 'others']
+//% groups=['MP3",'Sensor', 'Laser', 'others']
 namespace notLegos {
 
     // Variables for MP3 and Volume Pot
@@ -36,6 +36,7 @@ namespace notLegos {
     let mp3playerPin = null
     let mp3playerVol = 0
     let mp3sfxVol = 0
+    let isCastleSay = null
 
     // String Arrays for Full Player Sound Sets and Shuffled Playlists Thereof
     let PlayerAwaitingMusic: string[] = []
@@ -98,6 +99,45 @@ namespace notLegos {
     
     // Player Strings - Mario
     let MarioSoundString = "A_21_1_100_1.5|A_21_2_100_1|I_21_3_100_3.3|A_21_4_100_1.9|A_21_5_100_2.1|I_21_6_100_1.8|I_21_7_100_1.8|R_21_8_100_0.6|R_21_9_100_1.3|R_21_10_100_1.1|R_21_11_100_0.6|R_21_12_100_0.8|R_21_13_100_1.6|R_21_14_100_1.3|R_21_15_100_1.2|R_21_16_100_1.1|R_21_17_100_1.3|R_21_18_100_1|Y_21_19_100_0.2|Y_21_20_100_0.2|Y_21_21_100_0.3|Y_21_22_100_0.5|Y_21_23_100_0.6|Y_21_24_100_0.6|Y_21_25_100_0.6|Y_21_26_100_0.6|Y_21_27_100_0.6|Y_21_28_100_0.6|Y_21_29_100_0.7|Y_21_30_100_0.7|Y_21_31_100_0.7|Y_21_32_100_0.7|Y_21_33_100_0.7|Y_21_34_100_0.8|Y_21_35_100_0.8|Y_21_36_100_0.8|Y_21_37_100_0.8|Y_21_38_100_0.8|Y_21_39_100_0.8|Y_21_40_100_0.9|Y_21_41_100_0.9|Y_21_42_100_0.9|Y_21_43_100_0.9|Y_21_44_100_0.9|Y_21_45_100_0.9|Y_21_46_100_0.9|Y_21_47_100_1|Y_21_48_100_1|Y_21_49_100_1|Y_21_50_100_1|Y_21_51_100_1.1|Y_21_52_100_1.1|Y_21_53_100_1.1|Y_21_54_100_1.2|Y_21_55_100_1.2|Y_21_56_100_1.2|Y_21_57_100_1.2|Y_21_58_100_1.3|Y_21_59_100_1.3|Y_21_60_100_1.3|Y_21_61_100_1.4|Y_21_62_100_1.4|S_21_63_100_1|S_21_64_100_1.6|S_21_65_100_1.7|S_21_66_100_1.7|S_21_67_100_1.9|S_21_68_100_2.1|S_21_69_100_2.2|S_21_70_100_2.4|S_21_71_100_2.4|S_21_72_100_2.5|W_21_73_100_1.8|W_21_74_100_2|W_21_75_100_2.2|W_21_76_100_2.6|W_21_77_100_2.9|O_21_78_100_0.6|O_21_79_100_0.4|O_21_80_100_0.4|O_21_81_100_1.1|O_21_82_100_1.5|O_21_83_100_0.8|O_21_84_100_0.7|O_21_85_100_0.8|O_21_86_100_0.9|O_21_87_100_1.3|O_21_88_100_0.5|O_21_89_100_1|O_21_90_100_1|O_21_91_100_0.4|O_21_92_100_0.5|O_21_93_100_0.9|O_21_94_100_0.4|O_21_95_100_0.4|N_21_96_100_1|N_21_97_100_1.1|N_21_98_100_1|N_21_99_100_0.6|N_21_100_100_0.9|N_21_101_100_1.4|N_21_102_100_1.7|N_21_103_100_1.3|N_21_104_100_0.6|N_21_105_100_1.4|N_21_106_100_0.8|N_21_107_100_1.1|N_21_108_100_1.1|N_21_109_100_0.8|N_21_110_100_1.7|N_21_111_100_2.4|I_21_112_100_0.8|I_21_113_100_0.9|F_21_114_100_1.1|F_21_115_100_2.5|F_21_116_100_2.5|F_21_117_100_1.4|L_21_118_100_3.4|L_21_119_100_3.5|L_21_120_100_4.4|L_21_121_100_1.5|H_21_122_100_44.4"
+
+
+
+
+
+    let sonarPinT = DigitalPin.P0
+    let sonarPinE = DigitalPin.P0
+
+    //% blockId=NL_SENSOR_SonarFirstRead
+    //% subcategory="Sonar" group="Sensor"
+    //% weight=101
+    //% block="first sonar at %pin1|%pin2"
+    export function SonarFirstRead(pin1:DigitalPin,pin2:DigitalPin): number{
+        sonarPinT = pin1
+        sonarPinE = pin2
+        pins.setPull(sonarPinT, PinPullMode.PullNone)
+        return SonarNextRead()
+    } 
+
+    //% blockId=NL_SENSOR_SonarNextRead
+    //% subcategory="Sonar" group="Sensor"
+    //% weight=102
+    //% block="next sonar"
+    export function SonarNextRead(): number {
+        pins.digitalWritePin(sonarPinT, 0)
+        control.waitMicros(2)
+        pins.digitalWritePin(sonarPinT, 1)
+        control.waitMicros(10)
+        pins.digitalWritePin(sonarPinT, 0)
+        return Math.floor(pins.pulseIn(sonarPinE, PulseValue.High, 25000) * 34 / 2000)
+    }
+
+
+
+
+
+
+
+
 
     // BLOCK - Set the Player's Sounds
     //% blockId=nl_player_set
