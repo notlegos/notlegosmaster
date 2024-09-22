@@ -39,11 +39,12 @@ input.onLogoEvent(TouchButtonEvent.Touched, function () {
 let lastHue = 0
 let lastGesture = 0
 let lastSonarRead = 0
+let iBegan = 0
 let textIn = ""
 let limitNines = 0
-let trackNo = 0
 let pushPrint2 = ""
 let pushPrint1 = ""
+let trackNo = 0
 let lastLaserC = 0
 let lastLaserL = 0
 let lastLaserR = 0
@@ -77,23 +78,25 @@ if (isCastleSay) {
     lastLaserR = 0
     lastLaserL = 0
     lastLaserC = 0
+    notLegos.mp3setPorts(notLegos.mp3type.music, SerialPin.P15)
+    basic.pause(20)
+    notLegos.setVolume(notLegos.mp3type.music, 84)
+    trackNo = 1
+    basic.pause(20)
+    notLegos.updateVolumeGlobal()
 } else {
 	
 }
 pushPrint1 = ""
 pushPrint2 = ""
 let isReady = true
-notLegos.mp3setPorts(notLegos.mp3type.music, SerialPin.P15)
-basic.pause(20)
-notLegos.setVolume(notLegos.mp3type.music, 84)
-trackNo = 1
-basic.pause(20)
-notLegos.updateVolumeGlobal()
+let iTook = input.runningTimeMicros()
 loops.everyInterval(500, function () {
     notLegos.updateVolumeGlobal()
 })
 loops.everyInterval(40, function () {
-    while (isReady) {
+    iBegan = input.runningTime()
+    if (isReady) {
         if (isCastleSay) {
             sockLights.rotate(1)
             wheelLights.rotate(1)
@@ -112,4 +115,8 @@ loops.everyInterval(40, function () {
         	
         }
     }
+    iTook = input.runningTime() - iBegan
+})
+loops.everyInterval(3000, function () {
+    Connected.showUserNumber(5, iTook)
 })
