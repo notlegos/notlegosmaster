@@ -1,11 +1,14 @@
 function pushPrint (lineNo: number, textLine: string) {
-    if (lineNo == 2) {
+    if (lineNo == 1) {
+        if (textLine != pushPrint1) {
+            pushPrint1 = textLine
+            Connected.showUserText(lineNo, textLine)
+        }
+    } else if (lineNo == 2) {
         if (textLine != pushPrint2) {
             pushPrint2 = textLine
             Connected.showUserText(lineNo, textLine)
         }
-    } else {
-    	
     }
 }
 function isNearly (reference: number, reading: number, tolerance: number) {
@@ -25,21 +28,22 @@ function padLimit (numberIn: number, digits: number) {
 }
 function printSay () {
     if (isCastleSay) {
-        pushPrint(2, "R" + padLimit(Math.round(lastLaserR / 100), 1) + " C" + padLimit(Math.round(lastLaserC / 100), 1) + " L" + padLimit(Math.round(lastLaserL / 100), 1))
+        pushPrint(1, "R" + lastLaserR + " C" + lastLaserC + " L" + lastLaserL)
+        pushPrint(2, notLegos.getVolumes())
     }
 }
 input.onLogoEvent(TouchButtonEvent.Touched, function () {
-    notLegos.sendMP3fileFolder("1", "1", SerialPin.P15)
-    basic.pause(2000)
-    notLegos.sendMP3fileFolder("1", "2", SerialPin.P15)
+    notLegos.sendMP3fileFolder("1", convertToText(trackNo), SerialPin.P15)
+    trackNo = trackNo + 1
 })
 let lastHue = 0
 let lastGesture = 0
 let lastSonarRead = 0
-let lastVolumeRead = 0
 let textIn = ""
 let limitNines = 0
+let trackNo = 0
 let pushPrint2 = ""
+let pushPrint1 = ""
 let lastLaserC = 0
 let lastLaserL = 0
 let lastLaserR = 0
@@ -48,13 +52,13 @@ let wheelLights: Connected.Strip = null
 let sockLights: Connected.Strip = null
 let digits: Connected.TM1637LEDs = null
 let isCastleSay = false
+let lastVolumeRead = 0
 pins.setAudioPinEnabled(false)
 led.enable(false)
 if (notLegos.SonarFirstRead(DigitalPin.P8, DigitalPin.P9) > 0) {
     isCastleSay = true
 }
-Connected.oledClear()
-Connected.showUserText(1, "SAY: " + convertToText(isCastleSay))
+Connected.showUserText(8, "SAY: " + convertToText(isCastleSay))
 if (isCastleSay) {
     notLegos.potSet(AnalogPin.P10)
     digits = Connected.tm1637Create(
@@ -76,8 +80,18 @@ if (isCastleSay) {
 } else {
 	
 }
+pushPrint1 = ""
 pushPrint2 = ""
 let isReady = true
+notLegos.mp3setPorts(notLegos.mp3type.music, SerialPin.P15)
+basic.pause(20)
+notLegos.setVolume(notLegos.mp3type.music, 84)
+trackNo = 1
+basic.pause(20)
+notLegos.updateVolumeGlobal()
+loops.everyInterval(500, function () {
+    notLegos.updateVolumeGlobal()
+})
 loops.everyInterval(40, function () {
     while (isReady) {
         if (isCastleSay) {
@@ -87,11 +101,10 @@ loops.everyInterval(40, function () {
             sockLights.show()
             wheelLights.show()
             scoreCircle.show()
-            lastVolumeRead = notLegos.potRead()
             lastSonarRead = notLegos.SonarNextRead()
-            lastLaserR = pins.analogReadPin(AnalogReadWritePin.P1)
-            lastLaserC = pins.analogReadPin(AnalogReadWritePin.P2)
-            lastLaserL = pins.analogReadPin(AnalogReadWritePin.P3)
+            lastLaserR = Math.round(pins.analogReadPin(AnalogReadWritePin.P1) / 80)
+            lastLaserC = Math.round(pins.analogReadPin(AnalogReadWritePin.P2) / 80)
+            lastLaserL = Math.round(pins.analogReadPin(AnalogReadWritePin.P3) / 80)
             lastGesture = Connected.getGesture()
             lastHue = Connected.readColor()
             printSay()

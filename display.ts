@@ -329,7 +329,12 @@ namespace Connected {
     //% block="clear display" color=#00B1ED
     //% subcategory=Display group="OLED"
     export function oledClear() {
-        //oledcmd(DISPLAY_OFF);   //display off
+        // if (firstoledinit) {
+        //     oledinit()
+        //     firstoledinit = false
+        // }
+
+        // oledcmd(DISPLAY_OFF);   //display off
         for (let j = 0; j < 8; j++) {
             setText(j, 0);
             {
@@ -339,7 +344,7 @@ namespace Connected {
                 }
             }
         }
-        //oledcmd(DISPLAY_ON);    //display on
+        // oledcmd(DISPLAY_ON);    //display on
         setText(0, 0);
     }
     /**
