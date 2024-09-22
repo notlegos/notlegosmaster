@@ -20,7 +20,7 @@ namespace notLegos {
     let End_Byte = 0xEF
     let Acknowledge = 0x00
     let CMD = 0x00
-    let para1 = 0x00
+    let para1 = 0x00 
     let para2 = 0x00
     let highByte = 0x00
     let lowByte = 0x00

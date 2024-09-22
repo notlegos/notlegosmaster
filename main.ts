@@ -24,8 +24,15 @@ function padLimit (numberIn: number, digits: number) {
     return textIn
 }
 function printSay () {
-    pushPrint(2, "R" + padLimit(Math.round(lastLaserR / 100), 1) + " C" + padLimit(Math.round(lastLaserC / 100), 1) + " L" + padLimit(Math.round(lastLaserL / 100), 1))
+    if (isCastleSay) {
+        pushPrint(2, "R" + padLimit(Math.round(lastLaserR / 100), 1) + " C" + padLimit(Math.round(lastLaserC / 100), 1) + " L" + padLimit(Math.round(lastLaserL / 100), 1))
+    }
 }
+input.onLogoEvent(TouchButtonEvent.Touched, function () {
+    notLegos.sendMP3fileFolder("1", "1", SerialPin.P15)
+    basic.pause(2000)
+    notLegos.sendMP3fileFolder("1", "2", SerialPin.P15)
+})
 let lastHue = 0
 let lastGesture = 0
 let lastSonarRead = 0
@@ -69,17 +76,17 @@ if (isCastleSay) {
 } else {
 	
 }
-let isReady = true
-for (let index = 0; index < 7; index++) {
-    let printLines: string[] = []
-    printLines.push("")
-}
 pushPrint2 = ""
-notLegos.sendMP3fileFolder("1", "1", SerialPin.P15)
-basic.pause(5000)
-control.inBackground(function () {
+let isReady = true
+loops.everyInterval(40, function () {
     while (isReady) {
         if (isCastleSay) {
+            sockLights.rotate(1)
+            wheelLights.rotate(1)
+            scoreCircle.rotate(1)
+            sockLights.show()
+            wheelLights.show()
+            scoreCircle.show()
             lastVolumeRead = notLegos.potRead()
             lastSonarRead = notLegos.SonarNextRead()
             lastLaserR = pins.analogReadPin(AnalogReadWritePin.P1)
@@ -87,16 +94,9 @@ control.inBackground(function () {
             lastLaserL = pins.analogReadPin(AnalogReadWritePin.P3)
             lastGesture = Connected.getGesture()
             lastHue = Connected.readColor()
-            sockLights.rotate(1)
-            wheelLights.rotate(1)
-            scoreCircle.rotate(1)
-            sockLights.show()
-            wheelLights.show()
-            scoreCircle.show()
             printSay()
         } else {
         	
         }
-        basic.pause(40)
     }
 })
