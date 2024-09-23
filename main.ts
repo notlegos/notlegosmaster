@@ -26,6 +26,14 @@ function padLimit (numberIn: number, digits: number) {
     }
     return textIn
 }
+function feedBank (BankString: string) {
+    let returnBank: number[][] = []
+    BankStrings = BankString.split("|")
+    for (let soundString of BankStrings) {
+        returnBank.push([parseFloat(soundString.split(".")[0]), parseFloat(soundString.split(".")[1]), parseFloat(soundString.split(".")[2])])
+    }
+    return returnBank
+}
 function printSay () {
     if (isCastleSay) {
         pushPrint(1, "R" + lastLaserR + " C" + lastLaserC + " L" + lastLaserL)
@@ -36,10 +44,14 @@ input.onLogoEvent(TouchButtonEvent.Touched, function () {
     notLegos.sendMP3fileFolder("1", convertToText(trackNo), SerialPin.P15)
     trackNo = trackNo + 1
 })
+function playLength (SoundArray: any[]) {
+	
+}
 let lastHue = 0
 let lastGesture = 0
 let lastSonarRead = 0
 let iBegan = 0
+let BankStrings: string[] = []
 let textIn = ""
 let limitNines = 0
 let pushPrint2 = ""
@@ -54,6 +66,7 @@ let sockLights: Connected.Strip = null
 let digits: Connected.TM1637LEDs = null
 let isCastleSay = false
 let lastVolumeRead = 0
+let returnBank2: number[] = []
 pins.setAudioPinEnabled(false)
 led.enable(false)
 if (notLegos.SonarFirstRead(DigitalPin.P8, DigitalPin.P9) > 0) {
@@ -67,7 +80,7 @@ if (isCastleSay) {
     DigitalPin.P6
     )
     sockLights = Connected.create(Connected.DigitalRJPin.P11, 8, Connected.NeoPixelMode.RGB)
-    sockLights.showRainbow(1, 360)
+    sockLights.showRainbow(120, 240)
     sockLights.show()
     wheelLights = Connected.create(Connected.DigitalRJPin.P12, 18, Connected.NeoPixelMode.RGB)
     wheelLights.showRainbow(1, 360)
@@ -91,6 +104,8 @@ pushPrint1 = ""
 pushPrint2 = ""
 let isReady = true
 let iTook = input.runningTimeMicros()
+let TutorialBank = feedBank("1.1.60|1.2.60|1.3.60|1.4.60|1.5.60|1.6.60|1.7.60")
+notLegos.sendMP3fileFolder(convertToText(TutorialBank[2][0]), convertToText(TutorialBank[2][1]), SerialPin.P15)
 loops.everyInterval(500, function () {
     notLegos.updateVolumeGlobal()
 })
