@@ -57,9 +57,11 @@ function printSay () {
         pushPrint(2, notLegos.getVolumes())
     }
 }
-function bankPlay (SoundArr: Array[], trackIndex: number) {
-    playSoundArray = SoundArr[trackIndex]
-    notLegos.sendMP3fileFolder(convertToText(playSoundArray[0]), convertToText(playSoundArray[1]), SerialPin.P15)
+function bankPlay (SoundBank: number[][], trackIndex: number) {
+    theSong = SoundBank[trackIndex]
+    theFolder = theSong[0]
+    theTrack = theSong[1]
+    notLegos.sendMP3fileFolder(convertToText(theFolder), convertToText(theTrack), SerialPin.P15)
 }
 input.onLogoEvent(TouchButtonEvent.Touched, function () {
     notLegos.sendMP3fileFolder("1", convertToText(trackNo), SerialPin.P15)
@@ -69,7 +71,9 @@ let lastHue = 0
 let lastGesture = 0
 let lastSonarRead = 0
 let iBegan = 0
-let playSoundArray: number[] = []
+let theTrack = 0
+let theFolder = 0
+let theSong: number[] = []
 let randTrack = 0
 let BankSplit: string[] = []
 let textIn = ""
@@ -86,10 +90,10 @@ let wheelLights: Connected.Strip = null
 let sockLights: Connected.Strip = null
 let digits: Connected.TM1637LEDs = null
 let isCastleSay = false
-let playSoundArray2: number[] = []
-let BankStrings: number[] = []
-let returnBank2: number[] = []
 let lastVolumeRead = 0
+let returnBank2: number[] = []
+let BankStrings: number[] = []
+let playSoundArray2: number[] = []
 pins.setAudioPinEnabled(false)
 led.enable(false)
 if (notLegos.SonarFirstRead(DigitalPin.P8, DigitalPin.P9) > 0) {
