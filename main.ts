@@ -33,8 +33,7 @@ function printSay () {
     }
 }
 input.onLogoEvent(TouchButtonEvent.Touched, function () {
-    notLegos.sendMP3fileFolder("1", convertToText(trackNo), SerialPin.P15)
-    trackNo = trackNo + 1
+    notLegos.mp3musicPlay(notLegos.musicGenre.awaiting)
 })
 let lastHue = 0
 let lastGesture = 0
@@ -54,9 +53,6 @@ let sockLights: Connected.Strip = null
 let digits: Connected.TM1637LEDs = null
 let isCastleSay = false
 let lastVolumeRead = 0
-let returnBank2: number[] = []
-let BankStrings: number[] = []
-let playSoundArray2: number[] = []
 pins.setAudioPinEnabled(false)
 led.enable(false)
 if (notLegos.SonarFirstRead(DigitalPin.P8, DigitalPin.P9) > 0) {
@@ -95,7 +91,6 @@ pushPrint1 = ""
 pushPrint2 = ""
 let isReady = true
 let iTook = input.runningTimeMicros()
-notLegos.mp3musicPlay(notLegos.musicGenre.awaiting)
 loops.everyInterval(500, function () {
     notLegos.updateVolumeGlobal()
 })
