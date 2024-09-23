@@ -98,7 +98,6 @@ namespace notLegos {
         dataArr[7] = highByte
         dataArr[8] = lowByte
     }
-
     function mp3_sendData(): void {
         let myBuff = pins.createBuffer(10);
         for (let i = 0; i < 10; i++) {
@@ -165,12 +164,6 @@ namespace notLegos {
         mp3_sendDataFast()
     }
 
-    //% blockId=NL_MP3_MusicPlay
-    //% subcategory="MP3" group="MP3"
-    //% block="Play %genre music"
-    export function mp3musicPlay(genre: musicGenre): void {
-
-    }
 
     //% blockId=NL_MP3_PlayerSay
     //% subcategory="MP3" group="MP3"
@@ -269,6 +262,68 @@ namespace notLegos {
     }
 
 /// END MP3 ///
+
+/// BEGIN SOUND BANK ///
+
+    let TutorialBank = feedBank("1.1.60|1.2.60|1.3.60|1.4.60|1.5.60|1.6.60|1.7.60")
+    let TutorialPlaylist = makePlaylist(TutorialBank)
+
+    function takeRotate(PlaylistIn: number[]) {
+        let returnTrack = PlaylistIn.shift()
+        PlaylistIn.push(returnTrack)
+        return returnTrack
+    }
+    function feedBank(BankString: string) {
+        let returnBank: number[][] = []
+        let BankSplit = BankString.split("|")
+        for (let soundString of BankSplit) {
+            returnBank.push([parseFloat(soundString.split(".")[0]), parseFloat(soundString.split(".")[1]), parseFloat(soundString.split(".")[2])])
+        }
+        return returnBank
+    }
+    function makePlaylist(SoundBank: any[]) {
+        let returnList: number[] = []
+        let orderedList: number[] = []
+        for (let soundNo = 0; soundNo <= SoundBank.length - 1; soundNo++) {
+            orderedList.push(soundNo)
+        }
+        while (orderedList.length > 0) {
+            let randTrack = randint(0, orderedList.length - 1)
+            returnList.push(orderedList.removeAt(randTrack))
+        }
+        return returnList
+    }
+    function bankPlay(mp3bit:mp3type, SoundBank: number[][], trackIndex: number) {
+        if (mp3bit == mp3type.music) {
+            serial.redirect(mp3musicPin, SerialPin.USB_RX, BaudRate.BaudRate9600)
+        } else if (mp3bit == mp3type.player) {
+            serial.redirect(mp3playerPin, SerialPin.USB_RX, BaudRate.BaudRate9600)
+        } else if (mp3bit == mp3type.sfxvoice) {
+            serial.redirect(mp3sfxPin, SerialPin.USB_RX, BaudRate.BaudRate9600)
+        }
+        let theSong = SoundBank[trackIndex]
+        dataArr[3] = 15
+        dataArr[5] = theSong[0]
+        dataArr[6] = theSong[1]
+        mp3_checkSum()
+        mp3_sendDataFast()
+    }
+
+
+    //% blockId=NL_MP3_MusicPlay
+    //% subcategory="MP3" group="MP3"
+    //% block="Play %genre music"
+    export function mp3musicPlay(genre: musicGenre): void {
+        if (genre == musicGenre.tutorial){
+            bankPlay(mp3type.music, TutorialBank, takeRotate(TutorialPlaylist))
+        }
+    }
+
+
+/// END SOUND BANK ///
+
+
+
 
 
     export enum mp3type { music, player, sfxvoice }
