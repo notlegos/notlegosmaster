@@ -265,8 +265,10 @@ namespace notLegos {
 
 /// BEGIN SOUND BANK ///
 
-    let TutorialBank = feedBank("1.1.60|1.2.60|1.3.60|1.4.60|1.5.60|1.6.60|1.7.60")
+    let TutorialBank = feedBank("1.1.47|1.2.52|1.3.52|1.4.59|1.5.60|1.6.60|1.7.60|1.8.60|1.9.60|1.10.60|1.11.60|1.12.60|1.13.60|1.14.60|1.15.60|1.16.60|1.17.60|1.18.60|1.19.60|1.20.60|1.21.60")
+    let AwaitingBank = feedBank("2.1.64|2.2.120|2.3.120|2.4.120|2.5.120|2.6.113|2.7.120|2.8.103|2.9.120|2.10.120|2.11.120|2.12.120|2.13.118|2.14.1202.15.120")
     let TutorialPlaylist = makePlaylist(TutorialBank)
+    let AwaitingPlaylist = makePlaylist(AwaitingBank)
 
     function takeRotate(PlaylistIn: number[]) {
         let returnTrack = PlaylistIn.shift()
@@ -316,6 +318,8 @@ namespace notLegos {
     export function mp3musicPlay(genre: musicGenre): void {
         if (genre == musicGenre.tutorial){
             bankPlay(mp3type.music, TutorialBank, takeRotate(TutorialPlaylist))
+        } else if (genre == musicGenre.awaiting) {
+            bankPlay(mp3type.music, AwaitingBank, takeRotate(AwaitingPlaylist))
         }
     }
 
