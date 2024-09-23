@@ -18,6 +18,11 @@ function isNearly (reference: number, reading: number, tolerance: number) {
         return false
     }
 }
+function takeRotate (PlaylistIn: number[]) {
+    returnTrack = PlaylistIn.shift()
+    PlaylistIn.push(returnTrack)
+    return returnTrack
+}
 function padLimit (numberIn: number, digits: number) {
     limitNines = 0
     textIn = convertToText(Math.round(Math.max(Math.min(numberIn, 10 ** digits - 1), 0)))
@@ -28,11 +33,23 @@ function padLimit (numberIn: number, digits: number) {
 }
 function feedBank (BankString: string) {
     let returnBank: number[][] = []
-    BankStrings = BankString.split("|")
-    for (let soundString of BankStrings) {
+    BankSplit = BankString.split("|")
+    for (let soundString of BankSplit) {
         returnBank.push([parseFloat(soundString.split(".")[0]), parseFloat(soundString.split(".")[1]), parseFloat(soundString.split(".")[2])])
     }
     return returnBank
+}
+function makePlaylist (SoundBank: any[]) {
+    let returnList: number[] = []
+    let orderedList: number[] = []
+    for (let soundNo = 0; soundNo <= SoundBank.length - 1; soundNo++) {
+        orderedList.push(soundNo)
+    }
+    while (orderedList.length > 0) {
+        randTrack = randint(0, orderedList.length - 1)
+        returnList.push(orderedList.removeAt(randTrack))
+    }
+    return returnList
 }
 function printSay () {
     if (isCastleSay) {
@@ -40,20 +57,24 @@ function printSay () {
         pushPrint(2, notLegos.getVolumes())
     }
 }
+function bankPlay (SoundArr: Array[], trackIndex: number) {
+    playSoundArray = SoundArr[trackIndex]
+    notLegos.sendMP3fileFolder(convertToText(playSoundArray[0]), convertToText(playSoundArray[1]), SerialPin.P15)
+}
 input.onLogoEvent(TouchButtonEvent.Touched, function () {
     notLegos.sendMP3fileFolder("1", convertToText(trackNo), SerialPin.P15)
     trackNo = trackNo + 1
 })
-function playLength (SoundArray: any[]) {
-	
-}
 let lastHue = 0
 let lastGesture = 0
 let lastSonarRead = 0
 let iBegan = 0
-let BankStrings: string[] = []
+let playSoundArray: number[] = []
+let randTrack = 0
+let BankSplit: string[] = []
 let textIn = ""
 let limitNines = 0
+let returnTrack = 0
 let pushPrint2 = ""
 let pushPrint1 = ""
 let trackNo = 0
@@ -65,8 +86,10 @@ let wheelLights: Connected.Strip = null
 let sockLights: Connected.Strip = null
 let digits: Connected.TM1637LEDs = null
 let isCastleSay = false
-let lastVolumeRead = 0
+let playSoundArray2: number[] = []
+let BankStrings: number[] = []
 let returnBank2: number[] = []
+let lastVolumeRead = 0
 pins.setAudioPinEnabled(false)
 led.enable(false)
 if (notLegos.SonarFirstRead(DigitalPin.P8, DigitalPin.P9) > 0) {
@@ -74,6 +97,7 @@ if (notLegos.SonarFirstRead(DigitalPin.P8, DigitalPin.P9) > 0) {
 }
 Connected.showUserText(8, "SAY: " + convertToText(isCastleSay))
 if (isCastleSay) {
+    pins.digitalWritePin(DigitalPin.P5, 1)
     notLegos.potSet(AnalogPin.P10)
     digits = Connected.tm1637Create(
     DigitalPin.P7,
@@ -105,7 +129,9 @@ pushPrint2 = ""
 let isReady = true
 let iTook = input.runningTimeMicros()
 let TutorialBank = feedBank("1.1.60|1.2.60|1.3.60|1.4.60|1.5.60|1.6.60|1.7.60")
-notLegos.sendMP3fileFolder(convertToText(TutorialBank[2][0]), convertToText(TutorialBank[2][1]), SerialPin.P15)
+let TutorialPlaylist = makePlaylist(TutorialBank)
+Connected.showUserText(6, "" + takeRotate(TutorialPlaylist) + "")
+bankPlay(TutorialBank, takeRotate(TutorialPlaylist))
 loops.everyInterval(500, function () {
     notLegos.updateVolumeGlobal()
 })
