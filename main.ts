@@ -61,7 +61,7 @@ function bankPlay (SoundBank: number[][], trackIndex: number) {
     theSong = SoundBank[trackIndex]
     theFolder = theSong[0]
     theTrack = theSong[1]
-    notLegos.sendMP3fileFolder(convertToText(theFolder), convertToText(theTrack), SerialPin.P15)
+    notLegos.sendMP3numbers(theFolder, theTrack, SerialPin.P15)
 }
 input.onLogoEvent(TouchButtonEvent.Touched, function () {
     notLegos.sendMP3fileFolder("1", convertToText(trackNo), SerialPin.P15)
@@ -134,7 +134,6 @@ let isReady = true
 let iTook = input.runningTimeMicros()
 let TutorialBank = feedBank("1.1.60|1.2.60|1.3.60|1.4.60|1.5.60|1.6.60|1.7.60")
 let TutorialPlaylist = makePlaylist(TutorialBank)
-Connected.showUserText(6, "" + takeRotate(TutorialPlaylist) + "")
 bankPlay(TutorialBank, takeRotate(TutorialPlaylist))
 loops.everyInterval(500, function () {
     notLegos.updateVolumeGlobal()

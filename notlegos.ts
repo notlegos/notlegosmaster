@@ -153,6 +153,18 @@ namespace notLegos {
         mp3_sendDataFast()
     }
 
+    //% blockId="NL_MP3_SendNumbers" 
+    //% block="Send numbers for folder %folderNum file %fileNum on %sPin"
+    //% subcategory=MP3 group="MP3"
+    export function sendMP3numbers(folderNum: number, fileNum: number, sPin: SerialPin): void {
+        serial.redirect(sPin, SerialPin.USB_RX, BaudRate.BaudRate9600)
+        dataArr[3] = 15
+        dataArr[5] = folderNum
+        dataArr[6] = fileNum
+        mp3_checkSum()
+        mp3_sendDataFast()
+    }
+
     //% blockId=NL_MP3_MusicPlay
     //% subcategory="MP3" group="MP3"
     //% block="Play %genre music"
