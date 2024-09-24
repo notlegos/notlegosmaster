@@ -43,7 +43,6 @@ let textIn = ""
 let limitNines = 0
 let pushPrint2 = ""
 let pushPrint1 = ""
-let sockLights: notLegos.Strip = null
 let trackNo = 0
 let lastLaserC = 0
 let lastLaserL = 0
@@ -73,8 +72,7 @@ if (isCastleSay) {
     trackNo = 1
     basic.pause(20)
     notLegos.updateVolumeGlobal()
-    sockLights = notLegos.create(DigitalPin.P11, 8, notLegos.NeoPixelMode.RGB)
-    sockLights.showRainbow(1, 360)
+    notLegos.castleSayLights(DigitalPin.P12, DigitalPin.P13, DigitalPin.P11)
 } else {
 	
 }
@@ -89,8 +87,7 @@ loops.everyInterval(40, function () {
     iBegan = input.runningTime()
     if (isReady) {
         if (isCastleSay) {
-            sockLights.rotate(1)
-            sockLights.show()
+            notLegos.castleSayRotate()
             lastSonarRead = notLegos.SonarNextRead()
             lastLaserR = Math.round(pins.analogReadPin(AnalogReadWritePin.P1) / 80)
             lastLaserC = Math.round(pins.analogReadPin(AnalogReadWritePin.P2) / 80)

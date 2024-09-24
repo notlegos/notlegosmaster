@@ -33,6 +33,14 @@ namespace notLegos {
 /// END TRIMPOT ///
 
 /// BEGIN NEOPIXEL ///
+
+    let sockLights: Strip = null
+    let scoreLights: Strip = null
+    let wheelLights: Strip = null
+    let kongLights: Strip = null
+    let spaceLights: Strip = null
+    let brickLights: Strip = null
+
     export enum NeoPixelColors {
         //% block=red
         Red = 0xFF0000,
@@ -80,6 +88,51 @@ namespace notLegos {
         _length: number; // number of LEDs
         _mode: NeoPixelMode;
         _matrixWidth: number; // number of leds in a matrix - if any
+
+        /**
+         * Set LED to a given color (range 0-255 for r, g, b).
+         * You need to call ``show`` to make the changes visible.
+         * @param pixeloffset position of the NeoPixel in the strip
+         * @param rgb RGB color of the LED
+         */
+        //% blockId="neopixel_set_pixel_color" block="%strip|set pixel color at %pixeloffset|to %rgb=neopixel_colors"
+        //% weight=80 color=#EA5532
+        //% parts="neopixel" subcategory=Neopixel
+        setPixelColor(pixeloffset: number, rgb: number): void {
+            this.setPixelRGB(pixeloffset >> 0, rgb >> 0);
+        }
+
+        private setPixelRGB(pixeloffset: number, rgb: number): void {
+            if (pixeloffset < 0
+                || pixeloffset >= this._length)
+                return;
+
+            let stride = this._mode === NeoPixelMode.RGBW ? 4 : 3;
+            pixeloffset = (pixeloffset + this.start) * stride;
+
+            let red = unpackR(rgb);
+            let green = unpackG(rgb);
+            let blue = unpackB(rgb);
+
+            let br = this.brightness;
+            if (br < 255) {
+                red = (red * br) >> 8;
+                green = (green * br) >> 8;
+                blue = (blue * br) >> 8;
+            }
+            this.setBufferRGB(pixeloffset, red, green, blue)
+        }
+
+        private setBufferRGB(offset: number, red: number, green: number, blue: number): void {
+            if (this._mode === NeoPixelMode.RGB_RGB) {
+                this.buf[offset + 0] = red;
+                this.buf[offset + 1] = green;
+            } else {
+                this.buf[offset + 0] = green;
+                this.buf[offset + 1] = red;
+            }
+            this.buf[offset + 2] = blue;
+        }
 
         /**
          * Shows all LEDs to a given color (range 0-255 for r, g, b).
@@ -157,19 +210,6 @@ namespace notLegos {
                 this.setPixelColor(steps - 1, hsl(endHue, saturation, luminance));
             }
             this.show();
-        }
-
-        /**
-         * Set LED to a given color (range 0-255 for r, g, b).
-         * You need to call ``show`` to make the changes visible.
-         * @param pixeloffset position of the NeoPixel in the strip
-         * @param rgb RGB color of the LED
-         */
-        //% blockId="neopixel_set_pixel_color" block="%strip|set pixel color at %pixeloffset|to %rgb=neopixel_colors"
-        //% weight=80 color=#EA5532
-        //% parts="neopixel" subcategory=Neopixel
-        setPixelColor(pixeloffset: number, rgb: number): void {
-            this.setPixelRGB(pixeloffset >> 0, rgb >> 0);
         }
 
         /**
@@ -264,26 +304,10 @@ namespace notLegos {
             this.buf.rotate(-offset * stride, this.start * stride, this._length * stride)
         }
 
-        /**
-         * Set the pin where the neopixel is connected, defaults to P0.
-         */
-        //% weight=10 color=#EA5532
-        //% parts="neopixel" subcategory=Neopixel
+
         setPin(pin: DigitalPin): void {
             this.pin = pin;
-            pins.digitalWritePin(this.pin, 0);
-            // don't yield to avoid races on initialization
-        }
-
-        private setBufferRGB(offset: number, red: number, green: number, blue: number): void {
-            if (this._mode === NeoPixelMode.RGB_RGB) {
-                this.buf[offset + 0] = red;
-                this.buf[offset + 1] = green;
-            } else {
-                this.buf[offset + 0] = green;
-                this.buf[offset + 1] = red;
-            }
-            this.buf[offset + 2] = blue;
+            pins.digitalWritePin(this.pin, 0);  // don't yield to avoid races on initialization
         }
 
         private setAllRGB(rgb: number) {
@@ -303,27 +327,19 @@ namespace notLegos {
                 this.setBufferRGB(i * stride, red, green, blue)
             }
         }
-        private setPixelRGB(pixeloffset: number, rgb: number): void {
-            if (pixeloffset < 0
-                || pixeloffset >= this._length)
-                return;
+    }
 
-            let stride = this._mode === NeoPixelMode.RGBW ? 4 : 3;
-            pixeloffset = (pixeloffset + this.start) * stride;
-
-            let red = unpackR(rgb);
-            let green = unpackG(rgb);
-            let blue = unpackB(rgb);
-
-            let br = this.brightness;
-            if (br < 255) {
-                red = (red * br) >> 8;
-                green = (green * br) >> 8;
-                blue = (blue * br) >> 8;
-            }
-            this.setBufferRGB(pixeloffset, red, green, blue)
-        }
-
+    function unpackR(rgb: number): number {
+        let r = (rgb >> 16) & 0xFF;
+        return r;
+    }
+    function unpackG(rgb: number): number {
+        let g = (rgb >> 8) & 0xFF;
+        return g;
+    }
+    function unpackB(rgb: number): number {
+        let b = (rgb) & 0xFF;
+        return b;
     }
 
     /**
@@ -350,18 +366,7 @@ namespace notLegos {
     function packRGB(a: number, b: number, c: number): number {
         return ((a & 0xFF) << 16) | ((b & 0xFF) << 8) | (c & 0xFF);
     }
-    function unpackR(rgb: number): number {
-        let r = (rgb >> 16) & 0xFF;
-        return r;
-    }
-    function unpackG(rgb: number): number {
-        let g = (rgb >> 8) & 0xFF;
-        return g;
-    }
-    function unpackB(rgb: number): number {
-        let b = (rgb) & 0xFF;
-        return b;
-    }
+    
 
     /**
      * Converts a hue saturation luminosity value into a RGB color
@@ -433,9 +438,8 @@ namespace notLegos {
     }
 
     //% blockId=NL_PIXEL_Create
-    //% subcategory="Neopixels" Group="Neopixels"
+    //% subcategory="Neopixel" Group="Neopixel"
     //% block="NeoPixel at pin %thePin|with %numleds|leds as %mode"
-    //% blockSetVariable=
     //% weight=100
     export function create(thePin: DigitalPin, numleds: number, mode: NeoPixelMode): Strip {
         let strip = new Strip();
@@ -445,11 +449,36 @@ namespace notLegos {
         strip._length = numleds;
         strip._mode = mode;
         strip._matrixWidth = 0;
-        strip.setBrightness(50)
+        strip.setBrightness(255)
         strip.setPin(thePin)
         return strip;
     }
 
+    //% blockId=NL_PIXEL_CastleSay
+    //% subcategory="Neopixel" Group="Neopixel"
+    //% block="Sock Circle:%sockPin  Wheel Strip/Circle:%wheelPin  Score Circle:%scorePin "
+    //% weight=100
+    export function castleSayLights(sockPin: DigitalPin, wheelPin: DigitalPin, scorePin: DigitalPin): void{
+        scoreLights = create(scorePin,8,NeoPixelMode.RGB)
+        scoreLights.showRainbow(1, 360)
+        sockLights = create(sockPin, 8, NeoPixelMode.RGB)
+        sockLights.showRainbow(1, 360)
+        wheelLights = create(wheelPin, 18, NeoPixelMode.RGB)
+        wheelLights.showRainbow(1, 360)
+    }
+
+    //% blockId=NL_PIXEL_CastleSayTick
+    //% subcategory="Neopixel" Group="Neopixel"
+    //% block="Rotate Castle Say lights"
+    //% weight=100
+    export function castleSayRotate(): void {
+        scoreLights.rotate(1)
+        scoreLights.show()
+        sockLights.rotate(1)
+        sockLights.show()
+        wheelLights.rotate(1)
+        wheelLights.show()
+    }
 
 
 
