@@ -34,11 +34,6 @@ namespace notLegos {
 
 /// BEGIN NEOPIXEL ///
 
-    export enum NeoPixelMode {
-        RGB = 0,
-        RGBW = 1,
-        RGB_RGB = 2
-    }
 
     //% shim=sendBufferAsm
     function sendBuffer(buf: Buffer, pin: DigitalPin) {
@@ -49,7 +44,6 @@ namespace notLegos {
         pin: DigitalPin;
         start: number; // start offset in LED strip
         _length: number; // number of LEDs
-        _mode: NeoPixelMode;
 
         //% blockId="NL_PIXEL_SetHSL" 
         //% block="%strip|set pixel color at %pixeloffset|to h%h s%s l%l"
@@ -58,7 +52,7 @@ namespace notLegos {
             if (pixeloffset < 0
                 || pixeloffset >= this._length)
                 return;
-            let stride = this._mode === NeoPixelMode.RGBW ? 4 : 3;
+            let stride = 3;
             pixeloffset = (pixeloffset + this.start) * stride;
             h = Math.round(h) % 360;
             s = Math.clamp(0, 99, Math.round(s));
@@ -101,21 +95,9 @@ namespace notLegos {
                 b$ = x;
             }
             let m = Math.idiv((Math.idiv((l * 2 << 8), 100) - c), 2);
-            let red = r$ + m;
-            let green = g$ + m;
-            let blue = b$ + m;
-            this.setBufferRGB(pixeloffset, red, green, blue)
-        }
-
-        private setBufferRGB(offset: number, red: number, green: number, blue: number): void {
-            if (this._mode === NeoPixelMode.RGB_RGB) {
-                this.buf[offset + 0] = red;
-                this.buf[offset + 1] = green;
-            } else {
-                this.buf[offset + 0] = green;
-                this.buf[offset + 1] = red;
-            }
-            this.buf[offset + 2] = blue;
+            this.buf[pixeloffset + 0] = g$ + m;
+            this.buf[pixeloffset + 1] = r$ + m;
+            this.buf[pixeloffset + 2] = b$ + m;
         }
 
         //Send all the changes to the strip.
@@ -130,36 +112,30 @@ namespace notLegos {
 
         //Shift LEDs forward and clear with zeros.
         shift(offset: number = 1): void {
-            offset = offset >> 0;
-            const stride = this._mode === NeoPixelMode.RGBW ? 4 : 3;
-            this.buf.shift(-offset * stride, this.start * stride, this._length * stride)
+            this.buf.shift(-offset * 3, this.start * 3, this._length * 3)
         }
 
         //Rotate LEDs forward
         rotate(offset: number = 1): void {
-            offset = offset >> 0;
-            const stride = this._mode === NeoPixelMode.RGBW ? 4 : 3;
-            this.buf.rotate(-offset * stride, this.start * stride, this._length * stride)
+            this.buf.rotate(-offset * 3, this.start * 3, this._length * 3)
         }
 
         setPin(pin: DigitalPin): void {
             this.pin = pin;
             pins.digitalWritePin(this.pin, 0);  // don't yield to avoid races on initialization
         }
-
     }
 
     //% blockId=NL_PIXEL_Create
     //% subcategory="Neopixel" Group="Neopixel"
     //% block="NeoPixel at pin %thePin|with %numleds|leds as %mode"
     //% weight=100
-    export function create(thePin: DigitalPin, numleds: number, mode: NeoPixelMode): Strip {
+    export function create(thePin: DigitalPin, numleds: number): Strip {
         let strip = new Strip();
-        let stride = mode === NeoPixelMode.RGBW ? 4 : 3;
+        let stride = 3;
         strip.buf = pins.createBuffer(numleds * stride);
         strip.start = 0;
         strip._length = numleds;
-        strip._mode = mode;
         strip.setPin(thePin)
         return strip;
     }
@@ -176,9 +152,9 @@ namespace notLegos {
     //% block="Sock Circle:%sockPin  Wheel Strip/Circle:%wheelPin  Score Circle:%scorePin "
     //% weight=100
     export function castleSayLights(sockPin: DigitalPin, wheelPin: DigitalPin, scorePin: DigitalPin): void{
-        scoreLights = create(scorePin,8,NeoPixelMode.RGB)
-        sockLights = create(sockPin, 8, NeoPixelMode.RGB)
-        wheelLights = create(wheelPin, 18, NeoPixelMode.RGB)
+        scoreLights = create(scorePin,8)
+        sockLights = create(sockPin, 8)
+        wheelLights = create(wheelPin, 18)
     }
 
     //% blockId=NL_PIXEL_CastleSayTick
@@ -187,7 +163,7 @@ namespace notLegos {
     //% weight=100
     export function castleSayRotate(): void {
         scoreLights.rotate(1)
-        scoreLights.setPixelHSL(5,200,0,1)
+        scoreLights.setPixelHSL(5,200,100,50)
         scoreLights.show()
         sockLights.rotate(1)
         sockLights.show()
