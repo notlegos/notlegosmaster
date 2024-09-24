@@ -72,7 +72,7 @@ if (isCastleSay) {
     trackNo = 1
     basic.pause(20)
     notLegos.updateVolumeGlobal()
-    notLegos.castleSayLights(DigitalPin.P12, DigitalPin.P13, DigitalPin.P11)
+    notLegos.castleSayLights(DigitalPin.P11, DigitalPin.P12, DigitalPin.P13)
 } else {
 	
 }
