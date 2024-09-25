@@ -87,7 +87,7 @@ loops.everyInterval(40, function () {
     iBegan = input.runningTime()
     if (isReady) {
         if (isCastleSay) {
-            notLegos.castleSayRotate()
+            notLegos.castleSayTick()
             lastSonarRead = notLegos.SonarNextRead()
             lastLaserR = Math.round(pins.analogReadPin(AnalogReadWritePin.P1) / 80)
             lastLaserC = Math.round(pins.analogReadPin(AnalogReadWritePin.P2) / 80)

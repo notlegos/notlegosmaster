@@ -132,44 +132,131 @@ namespace notLegos {
     //% weight=100
     export function create(thePin: DigitalPin, numleds: number): Strip {
         let strip = new Strip();
-        let stride = 3;
-        strip.buf = pins.createBuffer(numleds * stride);
+        strip.buf = pins.createBuffer(numleds * 3);
         strip.start = 0;
         strip._length = numleds;
         strip.setPin(thePin)
         return strip;
     }
 
-    let sockLights: Strip = null
-    let scoreLights: Strip = null
-    let wheelLights: Strip = null
-    let kongLights: Strip = null
-    let spaceLights: Strip = null
-    let brickLights: Strip = null
+    let NeoSock: Strip = null
+    let NeoScore: Strip = null
+    let NeoWheel: Strip = null
+    let NeoKong: Strip = null
+    let NeoStrips: Strip = null
+    let NeoBricks: Strip = null
+
+    let vfx_mine_tog: number[] = []
+    let vfx_mine_hue: number[] = []
+    let vfx_mine_sat: number[] = []
+    let vfx_mine_lum: number[] = []
+    let vfx_fire_tog: number[] = []
+    let vfx_fire_hue: number[] = []
+    let vfx_fire_sat: number[] = []
+    let vfx_fire_lum: number[] = []
+    let vfx_indicate_tog: number[] = []
+    let vfx_indicate_hue: number[] = []
+    let vfx_indicate_sat: number[] = []
+    let vfx_indicate_lum: number[] = []
+    let vfx_idle_tog: number[] = []
+    let vfx_idle_hue: number[] = []
+    let vfx_idle_sat: number[] = []
+    let vfx_idle_lum: number[] = []
+    let vfx_glow_tog: number[] = []
+    let vfx_glow_hue: number[] = []
+    let vfx_glow_sat: number[] = []
+    let vfx_glow_lum: number[] = []
+    let vfx_parade_tog: number[] = []
+    let vfx_parade_hue: number[] = []
+    let vfx_parade_sat: number[] = []
+    let vfx_parade_lum: number[] = []
+    let vfx_last_tog: number[] = []
+    let vfx_last_hue: number[] = []
+    let vfx_last_sat: number[] = []
+    let vfx_last_lum: number[] = []
+    let vfx_master_tog: number[] = []
+    let vfx_master_hue: number[] = []
+    let vfx_master_sat: number[] = []
+    let vfx_master_lum: number[] = []
+    let vfx_master_effect: number[] = []
+    let vfx_light_count = 0
 
     //% blockId=NL_PIXEL_CastleSay
     //% subcategory="Neopixel" Group="Neopixel"
     //% block="Sock Circle:%sockPin  Wheel Strip/Circle:%wheelPin  Score Circle:%scorePin "
     //% weight=100
-    export function castleSayLights(sockPin: DigitalPin, wheelPin: DigitalPin, scorePin: DigitalPin): void{
-        scoreLights = create(scorePin,8)
-        sockLights = create(sockPin, 8)
-        wheelLights = create(wheelPin, 18)
+    export function castleSayLights(sockPin: DigitalPin, wheelPin: DigitalPin, scorePin: DigitalPin): void {
+        NeoScore = create(scorePin, 8)
+        NeoSock = create(sockPin, 8)
+        NeoWheel = create(wheelPin, 18)
+        vfx_light_count = 8 + 8 + 18
+        for (let index = 0; index < vfx_light_count; index++) {
+            vfx_mine_tog.push(0)
+            vfx_mine_hue.push(50)
+            vfx_mine_sat.push(100)
+            vfx_mine_lum.push(50)
+            vfx_fire_tog.push(0)
+            vfx_fire_hue.push(50)
+            vfx_fire_sat.push(100)
+            vfx_fire_lum.push(50)
+            vfx_indicate_tog.push(0)
+            vfx_indicate_hue.push(50)
+            vfx_indicate_sat.push(100)
+            vfx_indicate_lum.push(50)
+            vfx_idle_tog.push(0)
+            vfx_idle_hue.push(50)
+            vfx_idle_sat.push(100)
+            vfx_idle_lum.push(50)
+            vfx_glow_tog.push(0)
+            vfx_glow_hue.push(50)
+            vfx_glow_sat.push(100)
+            vfx_glow_lum.push(50)
+            vfx_parade_tog.push(0)
+            vfx_parade_hue.push(50)
+            vfx_parade_sat.push(100)
+            vfx_parade_lum.push(50)
+            vfx_last_tog.push(0)
+            vfx_last_hue.push(50)
+            vfx_last_sat.push(100)
+            vfx_last_lum.push(50)
+            vfx_master_tog.push(0)
+            vfx_master_hue.push(0)
+            vfx_master_sat.push(100)
+            vfx_master_lum.push(50)
+            vfx_master_effect.push(0)
+        }
     }
 
     //% blockId=NL_PIXEL_CastleSayTick
     //% subcategory="Neopixel" Group="Neopixel"
-    //% block="Rotate Castle Say lights"
+    //% block="Advance Castle Say lights"
     //% weight=100
-    export function castleSayRotate(): void {
-        scoreLights.rotate(1)
-        scoreLights.setPixelHSL(5,200,100,50)
-        scoreLights.show()
-        sockLights.rotate(1)
-        sockLights.show()
-        wheelLights.rotate(1)
-        wheelLights.show()
+    export function castleSayTick(): void {
+        
+
+        castleSayWrite()
     }
+
+    function castleSayWrite(): void{
+        let masterIndex = 0
+        for (let index = 0; index < NeoSock.length(); index++){
+            NeoSock.setPixelHSL(index, vfx_master_hue[masterIndex], vfx_master_sat[masterIndex], vfx_master_lum[masterIndex])
+            masterIndex++
+        }
+        for (let index = 0; index < NeoWheel.length(); index++) {
+            NeoWheel.setPixelHSL(index, vfx_master_hue[masterIndex], vfx_master_sat[masterIndex], vfx_master_lum[masterIndex])
+            masterIndex++
+        }
+        for (let index = 0; index < NeoScore.length(); index++) {
+            NeoScore.setPixelHSL(index, vfx_master_hue[masterIndex], vfx_master_sat[masterIndex], vfx_master_lum[masterIndex])
+            masterIndex++
+        }
+        NeoSock.show()
+        NeoWheel.show()
+        NeoScore.show()
+    }
+
+
 
 
 
