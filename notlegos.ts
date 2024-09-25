@@ -124,6 +124,7 @@ namespace notLegos {
     let vfx_fire_hue: number[] = []
     let vfx_fire_sat: number[] = []
     let vfx_fire_lum: number[] = []
+    let vfx_fire_colors: number[] = []
     let vfx_indicate_tog: number[] = []
     let vfx_indicate_hue: number[] = []
     let vfx_indicate_sat: number[] = []
@@ -140,6 +141,7 @@ namespace notLegos {
     let vfx_parade_hue: number[] = []
     let vfx_parade_sat: number[] = []
     let vfx_parade_lum: number[] = []
+    let vfx_parade_colors: number[] = []
     let vfx_last_tog: number[] = []
     let vfx_last_hue: number[] = []
     let vfx_last_sat: number[] = []
@@ -161,10 +163,12 @@ namespace notLegos {
         NeoWheel = create(wheelPin, 18)
         vfx_light_count = 8 + 8 + 18
         vfxInit()
-        setEffect(vfxRegion.ScoreAll,vfxEffect.parade)
+        setEffect(vfxRegion.CastleSayAll,vfxEffect.parade)
     }
 
     function vfxInit(): void{
+        vfx_parade_colors = [hues.red, hues.orange, hues.yellow, hues.cyan, hues.blue, hues.purple]
+        vfx_fire_colors = [hues.red, hues.red, hues.red, hues.red, hues.orange, hues.orange, hues.orange, hues.orange, hues.orange, hues.yellow]
         for (let index = 0; index < vfx_light_count; index++) {
             vfx_mine_tog.push(0)
             vfx_mine_hue.push(50)
@@ -186,10 +190,10 @@ namespace notLegos {
             vfx_glow_hue.push(50)
             vfx_glow_sat.push(100)
             vfx_glow_lum.push(50)
-            vfx_parade_tog.push(0)
-            vfx_parade_hue.push(155)
+            vfx_parade_tog.push(randint(0, 1))
+            vfx_parade_hue.push(vfx_parade_colors[randint(0, vfx_parade_colors.length-1)])
             vfx_parade_sat.push(100)
-            vfx_parade_lum.push(50)
+            vfx_parade_lum.push(randint(10, 65))
             vfx_last_tog.push(0)
             vfx_last_hue.push(50)
             vfx_last_sat.push(100)
@@ -202,15 +206,56 @@ namespace notLegos {
         }
     }
 
+    export enum hues{
+        red=0,
+        orange=15,
+        yellow=40,
+        lime=85,
+        green=110,
+        cyan=170,
+        blue=240,
+        purple=310,
+        pink=265
+    }
 
     //% blockId=NL_PIXEL_CastleSayTick
     //% subcategory="Neopixel" Group="Neopixel"
     //% block="Advance Castle Say lights"
     //% weight=100
     export function castleSayTick(): void {
-        
+        paradeTick()
         castleSayWrite()
     }
+
+    function paradeTick(): void{
+        for (let index=0; index < vfx_light_count; index++){
+            let thisLum = vfx_parade_lum[index]
+            let thisHue = vfx_parade_hue[index]
+            let thisTog = vfx_parade_tog[index]
+            let nextHue = thisHue
+            if (thisTog == 0){
+                if (thisLum < 65){
+                    vfx_parade_lum[index] = thisLum + 15
+                } else if (thisLum >= 65){
+                    vfx_parade_tog[index] = 1
+                }
+            } else if (thisTog == 1){
+                if (thisLum>10){
+                    vfx_parade_lum[index] = thisLum - 5
+                } else if (thisLum <= 10){
+                    vfx_parade_tog[index] = 0
+                    while (nextHue == thisHue){
+                        nextHue = vfx_parade_colors[randint(0, vfx_parade_colors.length - 1)]
+                    }
+                    vfx_parade_hue[index] = nextHue
+                    vfx_parade_lum[index] = thisLum - randint(0,10)
+                }
+            }
+        }
+    }
+
+
+
 
     function vfxPrepareMaster(): void{
         for (let index = 0; index < vfx_light_count; index++) {
@@ -218,7 +263,7 @@ namespace notLegos {
             if (thisEffect == vfxEffect.parade) {
                 vfx_master_hue[index] = vfx_parade_hue[index]
                 vfx_master_sat[index] = vfx_parade_sat[index]
-                vfx_master_lum[index] = vfx_parade_lum[index]
+                vfx_master_lum[index] = Math.max(0,Math.min(50,vfx_parade_lum[index]))
             } else if (thisEffect == vfxEffect.fire) {
                 vfx_master_hue[index] = vfx_fire_hue[index]
                 vfx_master_sat[index] = vfx_fire_sat[index]
