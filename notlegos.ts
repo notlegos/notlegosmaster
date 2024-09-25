@@ -74,6 +74,41 @@ namespace notLegos {
             this.buf[pixeloffset + 2] = b$ + m;
         }
 
+
+        //% blockId="NL_PIXEL_PreciseSetHSL" 
+        //% block="%strip|set pixel color at %pixeloffset|to h%h s%s l%l"
+        //% subcategory="Neopixel" Group="Neopixel"
+        setPixelHSLPrecise(pixeloffset: number, h: number, s: number, l: number): void {
+            if (pixeloffset < 0 || pixeloffset >= this._length)
+                return;
+            pixeloffset = (pixeloffset + this.start) * 3
+            h = Math.clamp(0,1,h/360)
+            s = Math.clamp(0,1,s/100)
+            l = Math.clamp(0,1,l/100)
+            let r, g, b;
+            if (s === 0) {
+                r = g = b = l; // achromatic
+            } else {
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                r = this.hueToRgb(p, q, h + 1 / 3);
+                g = this.hueToRgb(p, q, h);
+                b = this.hueToRgb(p, q, h - 1 / 3);
+            }
+            this.buf[pixeloffset + 0] = Math.round(g * 255);
+            this.buf[pixeloffset + 1] = Math.round(r * 255);
+            this.buf[pixeloffset + 2] = Math.round(b * 255);
+        }
+
+        hueToRgb(p:number, q:number, t:number) {
+            if (t < 0) t += 1;
+            if (t > 1) t -= 1;
+            if (t < 1 / 6) return p + (q - p) * 6 * t;
+            if (t < 1 / 2) return q;
+            if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+            return p;
+        }
+
         //Send all the changes to the strip.
         show() {
             sendBuffer(this.buf, this.pin);
@@ -293,8 +328,20 @@ namespace notLegos {
     function glowTick(): void {
         for (let index = 0; index < vfx_light_count; index++) {
             let thisLum = vfx_glow_lum[index]
-            if (thisLum < 150){
+            if (thisLum < 4){
+                vfx_glow_lum[index] = thisLum+.2
+            } else if (thisLum < 5) {
+                vfx_glow_lum[index] = thisLum+ + .3
+            } else if (thisLum < 10) {
                 vfx_glow_lum[index] = thisLum + .5
+            } else if (thisLum < 15) {
+                vfx_glow_lum[index] = thisLum + 1
+            }else if (thisLum < 30) {
+                vfx_glow_lum[index] = thisLum + 1.5
+            } else if (thisLum < 100) {
+                vfx_glow_lum[index] = thisLum + 4
+            } else{
+                vfx_glow_lum[index] = 0
             }
         }
     }
@@ -334,15 +381,15 @@ namespace notLegos {
         vfxPrepareMaster()
         let masterIndex = 0
         for (let index = 0; index < NeoSock.length(); index++){
-            NeoSock.setPixelHSL(index, vfx_master_hue[masterIndex], vfx_master_sat[masterIndex], vfx_master_lum[masterIndex])
+            NeoSock.setPixelHSLPrecise(index, vfx_master_hue[masterIndex], vfx_master_sat[masterIndex], vfx_master_lum[masterIndex])
             masterIndex++
         }
         for (let index = 0; index < NeoWheel.length(); index++) {
-            NeoWheel.setPixelHSL(index, vfx_master_hue[masterIndex], vfx_master_sat[masterIndex], vfx_master_lum[masterIndex])
+            NeoWheel.setPixelHSLPrecise(index, vfx_master_hue[masterIndex], vfx_master_sat[masterIndex], vfx_master_lum[masterIndex])
             masterIndex++
         }
         for (let index = 0; index < NeoScore.length(); index++) {
-            NeoScore.setPixelHSL(index, vfx_master_hue[masterIndex], vfx_master_sat[masterIndex], vfx_master_lum[masterIndex])
+            NeoScore.setPixelHSLPrecise(index, vfx_master_hue[masterIndex], vfx_master_sat[masterIndex], vfx_master_lum[masterIndex])
             masterIndex++
         }
         NeoSock.show()
