@@ -163,13 +163,19 @@ namespace notLegos {
         NeoWheel = create(wheelPin, 18)
         vfx_light_count = 8 + 8 + 18
         vfxInit()
-        setEffect(vfxRegion.CastleSayAll,vfxEffect.fire)
+        setEffect(vfxRegion.CastleSayAll,vfxEffect.glow)
     }
 
     function vfxInit(): void{
         vfx_parade_colors = [hues.red, hues.orange, hues.yellow, hues.cyan, hues.blue, hues.purple]
         vfx_fire_colors = [hues.red, hues.red, hues.red, hues.red, hues.orange, hues.orange, hues.orange, hues.orange, hues.orange, hues.yellow]
         for (let index = 0; index < vfx_light_count; index++) {
+            if (index % 2 == 0){
+                vfx_idle_tog[index] = 0
+            } else{
+
+            }
+
             vfx_mine_tog.push(0)
             vfx_mine_hue.push(50)
             vfx_mine_sat.push(100)
@@ -188,8 +194,8 @@ namespace notLegos {
             vfx_idle_lum.push(50)
             vfx_glow_tog.push(0)
             vfx_glow_hue.push(50)
-            vfx_glow_sat.push(100)
-            vfx_glow_lum.push(50)
+            vfx_glow_sat.push(0)
+            vfx_glow_lum.push(0)
             vfx_parade_tog.push(randint(0, 1))
             vfx_parade_hue.push(vfx_parade_colors[randint(0, vfx_parade_colors.length-1)])
             vfx_parade_sat.push(100)
@@ -225,6 +231,7 @@ namespace notLegos {
     export function castleSayTick(): void {
         paradeTick()
         fireTick()
+        glowTick()
         castleSayWrite()
 
     }
@@ -283,6 +290,15 @@ namespace notLegos {
         }
     }
 
+    function glowTick(): void {
+        for (let index = 0; index < vfx_light_count; index++) {
+            let thisLum = vfx_glow_lum[index]
+            if (thisLum < 150){
+                vfx_glow_lum[index] = thisLum + .5
+            }
+        }
+    }
+
 
     function vfxPrepareMaster(): void{
         for (let index = 0; index < vfx_light_count; index++) {
@@ -306,7 +322,7 @@ namespace notLegos {
             } else if (thisEffect == vfxEffect.glow) {
                 vfx_master_hue[index] = vfx_glow_hue[index]
                 vfx_master_sat[index] = vfx_glow_sat[index]
-                vfx_master_lum[index] = vfx_glow_lum[index]
+                vfx_master_lum[index] = Math.min(100,vfx_glow_lum[index])
             } else if (thisEffect == vfxEffect.mine) {
                 vfx_master_hue[index] = vfx_mine_hue[index]
                 vfx_master_sat[index] = vfx_mine_sat[index]
