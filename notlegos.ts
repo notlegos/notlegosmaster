@@ -214,8 +214,8 @@ namespace notLegos {
         green=110,
         cyan=170,
         blue=240,
-        purple=310,
-        pink=265
+        purple=260,
+        pink=310
     }
 
     //% blockId=NL_PIXEL_CastleSayTick
@@ -235,13 +235,13 @@ namespace notLegos {
             let nextHue = thisHue
             if (thisTog == 0){
                 if (thisLum < 65){
-                    vfx_parade_lum[index] = thisLum + 15
+                    vfx_parade_lum[index] = thisLum + 12
                 } else if (thisLum >= 65){
                     vfx_parade_tog[index] = 1
                 }
             } else if (thisTog == 1){
                 if (thisLum>10){
-                    vfx_parade_lum[index] = thisLum - 5
+                    vfx_parade_lum[index] = thisLum - 4
                 } else if (thisLum <= 10){
                     vfx_parade_tog[index] = 0
                     while (nextHue == thisHue){
