@@ -163,7 +163,7 @@ namespace notLegos {
         NeoWheel = create(wheelPin, 18)
         vfx_light_count = 8 + 8 + 18
         vfxInit()
-        setEffect(vfxRegion.CastleSayAll,vfxEffect.parade)
+        setEffect(vfxRegion.CastleSayAll,vfxEffect.fire)
     }
 
     function vfxInit(): void{
@@ -174,10 +174,10 @@ namespace notLegos {
             vfx_mine_hue.push(50)
             vfx_mine_sat.push(100)
             vfx_mine_lum.push(50)
-            vfx_fire_tog.push(0)
-            vfx_fire_hue.push(50)
+            vfx_fire_tog.push(randint(0, 1))
+            vfx_fire_hue.push(vfx_fire_colors[randint(0, vfx_fire_colors.length - 1)])
             vfx_fire_sat.push(100)
-            vfx_fire_lum.push(50)
+            vfx_fire_lum.push(randint(30, 80))
             vfx_indicate_tog.push(0)
             vfx_indicate_hue.push(50)
             vfx_indicate_sat.push(100)
@@ -224,7 +224,9 @@ namespace notLegos {
     //% weight=100
     export function castleSayTick(): void {
         paradeTick()
+        fireTick()
         castleSayWrite()
+
     }
 
     function paradeTick(): void{
@@ -254,7 +256,32 @@ namespace notLegos {
         }
     }
 
-
+    function fireTick(): void {
+        for (let index = 0; index < vfx_light_count; index++) {
+            let thisLum = vfx_fire_lum[index]
+            let thisHue = vfx_fire_hue[index]
+            let thisTog = vfx_fire_tog[index]
+            let nextHue = thisHue
+            if (thisTog == 0) {
+                if (thisLum < 80) {
+                    vfx_fire_lum[index] = thisLum + 15
+                } else if (thisLum >= 80) {
+                    vfx_fire_tog[index] = 1
+                }
+            } else if (thisTog == 1) {
+                if (thisLum > 30) {
+                    vfx_fire_lum[index] = thisLum - 5
+                } else if (thisLum <= 30) {
+                    vfx_fire_tog[index] = 0
+                    while (nextHue == thisHue) {
+                        nextHue = vfx_fire_colors[randint(0, vfx_fire_colors.length - 1)]
+                    }
+                    vfx_fire_hue[index] = nextHue
+                    vfx_fire_lum[index] = thisLum - randint(0, 30)
+                }
+            }
+        }
+    }
 
 
     function vfxPrepareMaster(): void{
@@ -267,7 +294,7 @@ namespace notLegos {
             } else if (thisEffect == vfxEffect.fire) {
                 vfx_master_hue[index] = vfx_fire_hue[index]
                 vfx_master_sat[index] = vfx_fire_sat[index]
-                vfx_master_lum[index] = vfx_fire_lum[index]
+                vfx_master_lum[index] = Math.max(0, Math.min(50, vfx_fire_lum[index]))
             } else if (thisEffect == vfxEffect.indicate) {
                 vfx_master_hue[index] = vfx_indicate_hue[index]
                 vfx_master_sat[index] = vfx_indicate_sat[index]
