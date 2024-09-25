@@ -49,11 +49,9 @@ namespace notLegos {
         //% block="%strip|set pixel color at %pixeloffset|to h%h s%s l%l"
         //% subcategory="Neopixel" Group="Neopixel"
         setPixelHSL(pixeloffset: number, h: number, s: number, l: number): void {
-            if (pixeloffset < 0
-                || pixeloffset >= this._length)
+            if (pixeloffset < 0 || pixeloffset >= this._length)
                 return;
-            let stride = 3;
-            pixeloffset = (pixeloffset + this.start) * stride;
+            pixeloffset = (pixeloffset + this.start) * 3;
             h = Math.round(h) % 360;
             s = Math.clamp(0, 99, Math.round(s));
             l = Math.clamp(0, 99, Math.round(l));
@@ -64,36 +62,12 @@ namespace notLegos {
             let r$: number;
             let g$: number;
             let b$: number;
-            if (h1 == 0) { 
-                r$ = c;
-                g$ = x;
-                b$ = 0;
-            }
-            else if (h1 == 1) {
-                r$ = x;
-                g$ = c;
-                b$ = 0;
-            }
-            else if (h1 == 2) {
-                r$ = 0;
-                g$ = c;
-                b$ = x;
-            }
-            else if (h1 == 3) {
-                r$ = 0;
-                g$ = x;
-                b$ = c;
-            }
-            else if (h1 == 4) {
-                r$ = x;
-                g$ = 0;
-                b$ = c;
-            }
-            else if (h1 == 5) {
-                r$ = c;
-                g$ = 0;
-                b$ = x;
-            }
+            if (h1 == 0) { r$ = c; g$ = x; b$ = 0; }
+            else if (h1 == 1) { r$ = x; g$ = c; b$ = 0; }
+            else if (h1 == 2) { r$ = 0; g$ = c; b$ = x; }
+            else if (h1 == 3) { r$ = 0; g$ = x; b$ = c; }
+            else if (h1 == 4) { r$ = x; g$ = 0; b$ = c; }
+            else if (h1 == 5) { r$ = c; g$ = 0; b$ = x; }
             let m = Math.idiv((Math.idiv((l * 2 << 8), 100) - c), 2);
             this.buf[pixeloffset + 0] = g$ + m;
             this.buf[pixeloffset + 1] = r$ + m;
@@ -126,10 +100,6 @@ namespace notLegos {
         }
     }
 
-    //% blockId=NL_PIXEL_Create
-    //% subcategory="Neopixel" Group="Neopixel"
-    //% block="NeoPixel at pin %thePin|with %numleds|leds as %mode"
-    //% weight=100
     export function create(thePin: DigitalPin, numleds: number): Strip {
         let strip = new Strip();
         strip.buf = pins.createBuffer(numleds * 3);
@@ -190,6 +160,11 @@ namespace notLegos {
         NeoSock = create(sockPin, 8)
         NeoWheel = create(wheelPin, 18)
         vfx_light_count = 8 + 8 + 18
+        vfxInit()
+        setEffect(vfxRegion.ScoreAll,vfxEffect.parade)
+    }
+
+    function vfxInit(): void{
         for (let index = 0; index < vfx_light_count; index++) {
             vfx_mine_tog.push(0)
             vfx_mine_hue.push(50)
@@ -212,7 +187,7 @@ namespace notLegos {
             vfx_glow_sat.push(100)
             vfx_glow_lum.push(50)
             vfx_parade_tog.push(0)
-            vfx_parade_hue.push(50)
+            vfx_parade_hue.push(155)
             vfx_parade_sat.push(100)
             vfx_parade_lum.push(50)
             vfx_last_tog.push(0)
@@ -223,9 +198,10 @@ namespace notLegos {
             vfx_master_hue.push(0)
             vfx_master_sat.push(100)
             vfx_master_lum.push(50)
-            vfx_master_effect.push(0)
+            vfx_master_effect.push(vfxEffect.indicate)
         }
     }
+
 
     //% blockId=NL_PIXEL_CastleSayTick
     //% subcategory="Neopixel" Group="Neopixel"
@@ -233,11 +209,41 @@ namespace notLegos {
     //% weight=100
     export function castleSayTick(): void {
         
-
         castleSayWrite()
     }
 
+    function vfxPrepareMaster(): void{
+        for (let index = 0; index < vfx_light_count; index++) {
+            let thisEffect = vfx_master_effect[index]
+            if (thisEffect == vfxEffect.parade) {
+                vfx_master_hue[index] = vfx_parade_hue[index]
+                vfx_master_sat[index] = vfx_parade_sat[index]
+                vfx_master_lum[index] = vfx_parade_lum[index]
+            } else if (thisEffect == vfxEffect.fire) {
+                vfx_master_hue[index] = vfx_fire_hue[index]
+                vfx_master_sat[index] = vfx_fire_sat[index]
+                vfx_master_lum[index] = vfx_fire_lum[index]
+            } else if (thisEffect == vfxEffect.indicate) {
+                vfx_master_hue[index] = vfx_indicate_hue[index]
+                vfx_master_sat[index] = vfx_indicate_sat[index]
+                vfx_master_lum[index] = vfx_indicate_lum[index]
+            } else if (thisEffect == vfxEffect.idle) {
+                vfx_master_hue[index] = vfx_idle_hue[index]
+                vfx_master_sat[index] = vfx_idle_sat[index]
+                vfx_master_lum[index] = vfx_idle_lum[index]
+            } else if (thisEffect == vfxEffect.glow) {
+                vfx_master_hue[index] = vfx_glow_hue[index]
+                vfx_master_sat[index] = vfx_glow_sat[index]
+                vfx_master_lum[index] = vfx_glow_lum[index]
+            } else if (thisEffect == vfxEffect.mine) {
+                vfx_master_hue[index] = vfx_mine_hue[index]
+                vfx_master_sat[index] = vfx_mine_sat[index]
+                vfx_master_lum[index] = vfx_mine_lum[index]
+            }
+        }
+    }
     function castleSayWrite(): void{
+        vfxPrepareMaster()
         let masterIndex = 0
         for (let index = 0; index < NeoSock.length(); index++){
             NeoSock.setPixelHSL(index, vfx_master_hue[masterIndex], vfx_master_sat[masterIndex], vfx_master_lum[masterIndex])
@@ -256,7 +262,69 @@ namespace notLegos {
         NeoScore.show()
     }
 
+    function setEffect(region:vfxRegion, effect:vfxEffect){
+        if (region == vfxRegion.Score1){
+            vfx_master_effect[30] = effect
+        } else if (region == vfxRegion.Score2) {
+            vfx_master_effect[31] = effect
+        } else if (region == vfxRegion.Score3) {
+            vfx_master_effect[32] = effect
+        } else if (region == vfxRegion.Score4) {
+            vfx_master_effect[33] = effect
+        } else if (region == vfxRegion.Score5) {
+            vfx_master_effect[26] = effect
+        } else if (region == vfxRegion.Score6) {
+            vfx_master_effect[27] = effect
+        } else if (region == vfxRegion.Score7) {
+            vfx_master_effect[28] = effect
+        } else if (region == vfxRegion.Score8) {
+            vfx_master_effect[29] = effect
+        } else if (region == vfxRegion.ScoreAll) {
+            for (let i = 26; i <= 33; i++) {
+                vfx_master_effect[i] = effect
+            }
+        } else if (region == vfxRegion.SockAll) {
+            for (let i = 0; i <= 7; i++) {
+                vfx_master_effect[i] = effect
+            }
+        } else if (region == vfxRegion.WheelInner) {
+            for (let i = 18; i <= 25; i++) {
+                vfx_master_effect[i] = effect
+            }
+        } else if (region == vfxRegion.WheelOuter) {
+            for (let i = 8; i <= 17; i++) {
+                vfx_master_effect[i] = effect
+            }
+        } else if (region == vfxRegion.WheelAll) {
+            for (let i=8; i <= 25; i++){
+                vfx_master_effect[i] = effect
+            }
+        } else if (region == vfxRegion.CastleSayAll) {
+            for (let i = 0; i <= 33; i++) {
+                vfx_master_effect[i] = effect
+            }
+        }       
+    }
 
+    export enum vfxRegion{
+        Score1, Score2, Score3, Score4, Score5, Score6, Score7, Score8, ScoreAll,
+        SockAll,
+        WheelInner, WheelOuter, WheelAll,
+        KongFront, KongBack, KongAll,
+        BrickWheel, BrickShark, BrickBomb, BrickShell, BrickGhost, BrickDragon, BrickCannon, BrickAll,
+        SpotA, SpotB, SpotC, SpotD, SpotE, SpotF, SpotG, SpotH, SpotI, SpotAll,
+        CastleSayAll,
+        CastleDoAll
+    }
+
+    export enum vfxEffect{
+        parade = 0,
+        fire = 1,
+        indicate = 2,
+        idle = 3,
+        glow = 4,
+        mine = 5
+    }
 
 
 
@@ -424,7 +492,6 @@ namespace notLegos {
 
     }
 
-
     //% blockId=NL_MP3_UpdateVolume
     //% subcategory="MP3" group="MP3"
     //% block="Update volume for all"
@@ -542,7 +609,6 @@ namespace notLegos {
         mp3_sendDataFast()
     }
 
-
     //% blockId=NL_MP3_MusicPlay
     //% subcategory="MP3" group="MP3"
     //% block="Play %genre music"
@@ -558,41 +624,16 @@ namespace notLegos {
 /// END SOUND BANK ///
 
 
-
-
-
     export enum mp3type { music, player, sfxvoice }
-
     export enum musicGenre { intro, tutorial, awaiting, level, won, lost }
-
     export enum playerSaying { ready, yay, intro, nay, ouch, success, failure, won, lost, hurry }
-
     export enum sfxType { correct, incorrect, ghost, fire, explosion, splash, spark, slash }
-
     export enum voiceSaying { name, begin, retry, next, complete, gameover, welcome, intro, howto1, howto2, howto3, howto4, howto5, howto6, howto7, howto8, howto9 }
-
     export enum magicianSaysSide { left, right }
-
     export enum magicianDifficulty { easy, medium, hard }
-
     export enum spotName { A, B, C, D, E, F, G, H, I }
-
     export enum playerChar { mario, luigi, peach, daisy, toad, wario }
 
-
     // Enum - To Support MP3
-    export enum playType {
-        //% block="Play"
-        Play = 0x0D,
-        //% block="Stop"
-        Stop = 0x16,
-        //% block="PlayNext"
-        PlayNext = 0x01,
-        //% block="PlayPrevious"
-        PlayPrevious = 0x02,
-        //% block="Pause"
-        Pause = 0x0E
-    }
-
-
+    export enum playType { Play = 0x0D,Stop = 0x16,PlayNext = 0x01,PlayPrevious = 0x02,Pause = 0x0E }
 }
