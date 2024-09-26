@@ -178,7 +178,7 @@ namespace notLegos {
         vfx_indicate_tog[31] = 1    //kong
         vfx_indicate_tog[30] = 1    //kong
         
-        setEffect(vfxRegion.CastleDoAll, vfxEffect.idle)
+        setEffect(vfxRegion.CastleDoAll, vfxEffect.mine)
     }
 
     function vfxInit(): void{
@@ -192,7 +192,7 @@ namespace notLegos {
             vfx_indicate_sat.push(100)
 
             vfx_mine_tog.push(0)
-            vfx_mine_hue.push(50)
+            vfx_mine_hue.push(hues.red)
             vfx_mine_sat.push(100)
             vfx_mine_lum.push(50)
 
@@ -254,6 +254,7 @@ namespace notLegos {
         castleSayWrite()
         indicateTick()
         idleTick()
+        mineTick()
     }
 
 
@@ -268,6 +269,7 @@ namespace notLegos {
         castleDoWrite()
         indicateTick()
         idleTick()
+        mineTick()
     }
 
     function paradeTick(): void{
@@ -292,6 +294,28 @@ namespace notLegos {
                     }
                     vfx_parade_hue[index] = nextHue
                     vfx_parade_lum[index] = thisLum - randint(0,10)
+                }
+            }
+        }
+    }
+
+    function mineTick(): void {
+        for (let index = 0; index < vfx_light_count; index++) {
+            let thisLum = vfx_mine_lum[index]
+            let thisHue = vfx_mine_hue[index]
+            let thisTog = vfx_mine_tog[index]
+            let nextHue = thisHue
+            if (thisTog == 0) {
+                if (thisLum < 200) {
+                    vfx_mine_lum[index] = thisLum + 30
+                } else if (thisLum >= 200) {
+                    vfx_mine_tog[index] = 1
+                }
+            } else if (thisTog == 1) {
+                if (thisLum > 0) {
+                    vfx_mine_lum[index] = thisLum - 30
+                } else if (thisLum <= 0) {
+                    vfx_mine_tog[index] = 0
                 }
             }
         }
@@ -409,7 +433,7 @@ namespace notLegos {
             } else if (thisEffect == vfxEffect.idle) {
                 vfx_master_hue[index] = vfx_idle_hue[index]
                 vfx_master_sat[index] = vfx_idle_sat[index]
-                vfx_master_lum[index] = vfx_idle_lum[index]
+                vfx_master_lum[index] = Math.max(0, Math.min(50, vfx_idle_lum[index]))
             } else if (thisEffect == vfxEffect.glow) {
                 vfx_master_hue[index] = vfx_glow_hue[index]
                 vfx_master_sat[index] = vfx_glow_sat[index]
@@ -417,7 +441,7 @@ namespace notLegos {
             } else if (thisEffect == vfxEffect.mine) {
                 vfx_master_hue[index] = vfx_mine_hue[index]
                 vfx_master_sat[index] = vfx_mine_sat[index]
-                vfx_master_lum[index] = vfx_mine_lum[index]
+                vfx_master_lum[index] = Math.max(0, Math.min(50, vfx_mine_lum[index]))
             }
         }
     }
