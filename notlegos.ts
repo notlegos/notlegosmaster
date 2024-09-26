@@ -198,7 +198,7 @@ namespace notLegos {
     //% block="Reset VFX %effect"
     //% weight=100
     export function vfxReset(effect:vfxEffect):void{
-        if (effect = vfxEffect.idle){
+        if (effect == vfxEffect.idle){
             for (let index = 0; index < vfx_light_count; index++) {
                 vfx_idle_tog[index]=1
                 if (index % 2 == 0) { vfx_idle_tog[index] = 0; }
@@ -207,21 +207,21 @@ namespace notLegos {
                 vfx_idle_sat[index]=100
                 vfx_idle_lum[index]=50
             }
-        } else if (effect = vfxEffect.glow){
+        } else if (effect == vfxEffect.glow) {
             for (let index = 0; index < vfx_light_count; index++) {
                 vfx_glow_tog[index] = 0
                 vfx_glow_hue[index] = 50
-                vfx_glow_sat[index] = 0
+                // vfx_glow_sat[index] = 100
                 vfx_glow_lum[index] = 0
             }
-        } else if (effect = vfxEffect.mine) {
+        } else if (effect == vfxEffect.mine) {
             for (let index = 0; index < vfx_light_count; index++) {
                 vfx_mine_tog[index] = 0
                 vfx_mine_hue[index] = hues.red
                 vfx_mine_sat[index] = 100
                 vfx_mine_lum[index] = 50
             }
-        } else if (effect = vfxEffect.indicate) {
+        } else if (effect == vfxEffect.indicate) {
             for (let index = 0; index < vfx_light_count; index++) {
                 vfx_indicate_tog[index] = 0
                 vfx_indicate_sat[index] = 100

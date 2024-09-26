@@ -40,16 +40,16 @@ radio.onReceivedValue(function (name, value) {
         theName = name.substr(btToken.length, name.length - btToken.length)
         if (isCastleSay) {
             if (theName == "ready") {
-                notLegos.setEffect(notLegos.vfxRegion.CastleSayAll, notLegos.vfxEffect.idle)
-                notLegos.vfxReset(notLegos.vfxEffect.idle)
+                notLegos.setEffect(notLegos.vfxRegion.CastleSayAll, notLegos.vfxEffect.glow)
+                notLegos.vfxReset(notLegos.vfxEffect.glow)
                 notLegos.mp3musicPlay(notLegos.musicGenre.awaiting)
                 Connected.showUserText(7, "bt: " + theName + "=" + value)
             }
         } else {
             if (theName == "ready") {
-                notLegos.setEffect(notLegos.vfxRegion.CastleDoAll, notLegos.vfxEffect.idle)
-                notLegos.vfxReset(notLegos.vfxEffect.idle)
                 radio.sendValue("" + btToken + "ready", 1)
+                notLegos.setEffect(notLegos.vfxRegion.CastleDoAll, notLegos.vfxEffect.glow)
+                notLegos.vfxReset(notLegos.vfxEffect.glow)
                 Connected.showUserText(7, "bt: " + theName + "=" + value)
             }
         }
@@ -113,8 +113,6 @@ if (isCastleSay) {
     pins.digitalWritePin(DigitalPin.P12, 1)
     pins.digitalWritePin(DigitalPin.P13, 1)
     buttonRow = 0
-    notLegos.motorSet(notLegos.motors.wheel, notLegos.motorState.max)
-    basic.pause(2000)
     notLegos.motorSet(notLegos.motors.redrack, notLegos.motorState.min)
     notLegos.motorSet(notLegos.motors.shark, notLegos.motorState.min)
     notLegos.motorSet(notLegos.motors.ghost, notLegos.motorState.min)
