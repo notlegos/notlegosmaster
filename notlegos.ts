@@ -124,7 +124,7 @@ namespace notLegos {
         vfx_indicate_hue[28] = hues.red
         vfx_indicate_hue[29] = hues.red
 
-        setEffect(vfxRegion.CastleSayAll, vfxEffect.parade)
+        // setEffect(vfxRegion.CastleSayAll, vfxEffect.parade)
     }
 
     //% blockId=NL_PIXEL_CastleDo
@@ -187,7 +187,7 @@ namespace notLegos {
         vfx_indicate_tog[31] = 1    //kong
         vfx_indicate_tog[30] = 1    //kong
         
-        setEffect(vfxRegion.CastleDoAll, vfxEffect.indicate)
+        // setEffect(vfxRegion.CastleDoAll, vfxEffect.indicate)
     }
 
     function vfxInit(): void{
@@ -236,9 +236,28 @@ namespace notLegos {
             vfx_master_hue.push(0)
             vfx_master_sat.push(100)
             vfx_master_lum.push(50)
-            vfx_master_effect.push(vfxEffect.parade)    //leave this be!
+            vfx_master_effect.push(vfxEffect.off)    //leave this be!
         }
     }
+
+
+    //% blockId=NL_PIXEL_ResetVFX
+    //% subcategory="Neopixel" Group="Neopixel"
+    //% block="Reset VFX %effect"
+    //% weight=100
+    export function vfxReset(effect:vfxEffect):void{
+        if (effect = vfxEffect.idle){
+            for (let index = 0; index < vfx_light_count; index++) {
+                vfx_idle_tog[index]=1
+                if (index % 2 == 0) { vfx_idle_tog[index] = 0; }
+                vfx_idle_hue[index]=265
+                if (index % 2 == 0) { vfx_idle_hue[index] = 2; }
+                vfx_idle_sat[index]=100
+                vfx_idle_lum[index]=50
+            }
+        }
+    }
+
 
     export enum hues{
         red=0,
@@ -498,7 +517,11 @@ namespace notLegos {
         NeoKong.show()
     }
 
-    function setEffect(region:vfxRegion, effect:vfxEffect){
+    //% blockId=NL_PIXEL_SetEffect
+    //% subcategory="Neopixel" Group="Neopixel"
+    //% block="Set %region VFX to %effect"
+    //% weight=100
+    export function setEffect(region:vfxRegion, effect:vfxEffect){
         if (region == vfxRegion.Score1){
             vfx_master_effect[30] = effect
         } else if (region == vfxRegion.Score2) {
@@ -830,6 +853,15 @@ namespace notLegos {
 /// END MP3 ///
 
 /// BEGIN SOUND BANK ///
+    export enum mp3type { music, player, sfxvoice }
+    export enum musicGenre { intro, tutorial, awaiting, level, won, lost }
+    export enum playerSaying { ready, yay, intro, nay, ouch, success, failure, won, lost, hurry }
+    export enum sfxType { correct, incorrect, ghost, fire, explosion, splash, spark, slash }
+    export enum voiceSaying { name, begin, retry, next, complete, gameover, welcome, intro, howto1, howto2, howto3, howto4, howto5, howto6, howto7, howto8, howto9 }
+    export enum magicianSaysSide { left, right }
+    export enum magicianDifficulty { easy, medium, hard }
+    export enum spotName { A, B, C, D, E, F, G, H, I }
+    export enum playerChar { mario, luigi, peach, daisy, toad, wario }
 
     let TutorialBank = feedBank("1.1.47|1.2.52|1.3.52|1.4.59|1.5.60|1.6.60|1.7.60|1.8.60|1.9.60|1.10.60|1.11.60|1.12.60|1.13.60|1.14.60|1.15.60|1.16.60|1.17.60|1.18.60|1.19.60|1.20.60|1.21.60")
     let AwaitingBank = feedBank("2.1.64|2.2.120|2.3.120|2.4.120|2.5.120|2.6.113|2.7.120|2.8.103|2.9.120|2.10.120|2.11.120|2.12.120|2.13.118|2.14.1202.15.120")
@@ -890,15 +922,89 @@ namespace notLegos {
 
 /// END SOUND BANK ///
 
-    export enum mp3type { music, player, sfxvoice }
-    export enum musicGenre { intro, tutorial, awaiting, level, won, lost }
-    export enum playerSaying { ready, yay, intro, nay, ouch, success, failure, won, lost, hurry }
-    export enum sfxType { correct, incorrect, ghost, fire, explosion, splash, spark, slash }
-    export enum voiceSaying { name, begin, retry, next, complete, gameover, welcome, intro, howto1, howto2, howto3, howto4, howto5, howto6, howto7, howto8, howto9 }
-    export enum magicianSaysSide { left, right }
-    export enum magicianDifficulty { easy, medium, hard }
-    export enum spotName { A, B, C, D, E, F, G, H, I }
-    export enum playerChar { mario, luigi, peach, daisy, toad, wario }
+/// BEGIN KONG MOTORS ///
+    const kong_address = 0x10
+    export enum MotorList {
+        //% block="M1"
+        M1,
+        //% block="M2"
+        M2
+    }
+    export enum ServoList {
+        //% block="S0" enumval=0
+        S0,
+        //% block="S1" enumval=1
+        S1=1,
+        //% block="S2" enumval=2
+        S2=2,
+        //% block="S3" enumval=3
+        S3=3,
+        //% block="S4" enumval=4
+        S4=4,
+        //% block="S5" enumval=5
+        S5=5,
+        //% block="S6" enumval=6
+        S6=6,
+        //% block="S7" enumval=7
+        S7=7
+    }
+
+    //% blockId=kongSetMotorSpeed block="Set motor %motor speed to %speed"
+    //% subcategory="Motor" group="Motor"
+    //% speed.min=-100 speed.max=100
+    export function ksetMotorSpeed(motor: MotorList, speed: number): void {
+        let buf = pins.createBuffer(4);
+        switch (motor) {
+            case MotorList.M1:
+                buf[0] = 0x01;
+                buf[1] = 0x01;
+                if (speed < 0) {
+                    buf[1] = 0x02;
+                    speed = speed * -1
+                }
+                buf[2] = speed;
+                buf[3] = 0;
+                pins.i2cWriteBuffer(kong_address, buf);
+                break;
+            case MotorList.M2:
+                buf[0] = 0x02;
+                buf[1] = 0x01;
+                if (speed < 0) {
+                    buf[1] = 0x02;
+                    speed = speed * -1
+                }
+                buf[2] = speed;
+                buf[3] = 0;
+                pins.i2cWriteBuffer(kong_address, buf);
+                break;
+            default:
+                break;
+        }
+    }
+
+    //% blockId=kstopMotor block="Stop motor %motor"
+    //% subcategory="Motor" group="Motor"
+    export function stopMotor(motor: MotorList): void { ksetMotorSpeed(motor, 0);  }
+
+    //% blockId=ksetServoangle block="Set servo %servo angle to %angle"
+    //% angle.shadow="protractorPicker"
+    //% subcategory="Motor" group="Motor"
+    export function setServoangle(servo: ServoList, angle: number): void {
+        let buf = pins.createBuffer(4);
+        if (servo == 0) { buf[0] = 0x03; }
+        if (servo == 1) { buf[0] = 0x04; }
+        if (servo == 2) { buf[0] = 0x05; }
+        if (servo == 3) { buf[0] = 0x06; }
+        if (servo == 4) { buf[0] = 0x07; }
+        if (servo == 5) { buf[0] = 0x08; }
+        if (servo == 6) { buf[0] = 0x09; }
+        if (servo == 7) { buf[0] = 0x10; }
+        buf[1] = angle;
+        buf[2] = 0;
+        buf[3] = 0;
+        pins.i2cWriteBuffer(kong_address, buf);
+    }
+/// END KONG MOTORS ///
 
     // Enum - To Support MP3
     export enum playType { Play = 0x0D,Stop = 0x16,PlayNext = 0x01,PlayPrevious = 0x02,Pause = 0x0E }

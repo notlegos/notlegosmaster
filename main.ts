@@ -37,13 +37,17 @@ radio.onReceivedValue(function (name, value) {
         theName = name.substr(btToken.length, name.length - btToken.length)
         if (isCastleSay) {
             if (theName == "ready") {
-                Connected.showUserText(7, "bt: " + theName + "=" + value)
+                notLegos.setEffect(notLegos.vfxRegion.CastleSayAll, notLegos.vfxEffect.idle)
+                notLegos.vfxReset(notLegos.vfxEffect.idle)
                 notLegos.mp3musicPlay(notLegos.musicGenre.awaiting)
+                Connected.showUserText(7, "bt: " + theName + "=" + value)
             }
         } else {
             if (theName == "ready") {
-                Connected.showUserText(1, "bt: " + theName + "=" + value)
+                notLegos.setEffect(notLegos.vfxRegion.CastleDoAll, notLegos.vfxEffect.idle)
+                notLegos.vfxReset(notLegos.vfxEffect.idle)
                 radio.sendValue("" + btToken + "ready", 1)
+                Connected.showUserText(7, "bt: " + theName + "=" + value)
             }
         }
     }
@@ -99,6 +103,16 @@ if (isCastleSay) {
     pins.digitalWritePin(DigitalPin.P8, 1)
     pins.digitalWritePin(DigitalPin.P12, 1)
     pins.digitalWritePin(DigitalPin.P13, 1)
+    notLegos.ksetMotorSpeed(notLegos.MotorList.M1, 0)
+    notLegos.ksetMotorSpeed(notLegos.MotorList.M2, 0)
+    notLegos.setServoangle(notLegos.ServoList.S0, 50)
+    notLegos.setServoangle(notLegos.ServoList.S1, 20)
+    notLegos.setServoangle(notLegos.ServoList.S2, 110)
+    notLegos.setServoangle(notLegos.ServoList.S3, 170)
+    notLegos.setServoangle(notLegos.ServoList.S4, 65)
+    notLegos.setServoangle(notLegos.ServoList.S5, 135)
+    notLegos.setServoangle(notLegos.ServoList.S6, 90)
+    notLegos.setServoangle(notLegos.ServoList.S7, 100)
     notLegos.castleDoLights(DigitalPin.P14, DigitalPin.P15, DigitalPin.P16)
 }
 pushPrint1 = ""
