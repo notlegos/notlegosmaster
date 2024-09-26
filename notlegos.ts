@@ -1,43 +1,25 @@
 // NotLegos Blocks
-
 //% block="Not LEGOs" color=#0031AF weight=1000 icon="\uf3a5"
 //% groups='["MP3","Sensors"]'
 namespace notLegos {
 
-/// BEGIN TRIMPOT ///
-
-    let isPot = false
-    let potPin = AnalogPin.P0
-    let masterVolume = 25
-    let lastVolume = 0
-
-    //% blockId=NL_SENSOR_TrimpotSet
-    //% subcategory="Sensors" Group="Sensors"
-    //% block="set volume control pot at %aPin"
-    //% blockSetVariable=
-    //% weight=103
-    export function potSet(aPin: AnalogPin): void {
-        potPin = aPin
-        isPot = true
-        masterVolume = potRead()
-    }
-
-    function potRead() {
-        if (isPot) {
-            return Math.round(pins.map(pins.analogReadPin(potPin), 0, 1023, 0, 30))
-        } else {
-            return 5
-        }
-    }
-
-/// END TRIMPOT ///
 
 /// BEGIN NEOPIXEL ///
-
+    export enum hues { red = 0, orange = 15, yellow = 40, lime = 85, green = 110, cyan = 170, blue = 240, purple = 260, pink = 310 }
+    export enum vfxEffect { parade = 0, fire = 1, indicate = 2, idle = 3, glow = 4, mine = 5, off = 6 }
+    let NeoSock: Strip = null; let NeoScore: Strip = null; let NeoWheel: Strip = null; let NeoKong: Strip = null; let NeoStrip: Strip = null; let NeoBrick: Strip = null
+    let vfx_mine_tog: number[] = []; let vfx_mine_hue: number[] = []; let vfx_mine_sat: number[] = []; let vfx_mine_lum: number[] = []
+    let vfx_fire_tog: number[] = []; let vfx_fire_hue: number[] = []; let vfx_fire_sat: number[] = []; let vfx_fire_lum: number[] = []; let vfx_fire_colors: number[] = []
+    let vfx_indicate_tog: number[] = []; let vfx_indicate_hue: number[] = []; let vfx_indicate_sat: number[] = []; let vfx_indicate_lum: number[] = [];
+    let vfx_idle_tog: number[] = []; let vfx_idle_hue: number[] = []; let vfx_idle_sat: number[] = []; let vfx_idle_lum: number[] = []
+    let vfx_glow_tog: number[] = []; let vfx_glow_hue: number[] = []; let vfx_glow_sat: number[] = []; let vfx_glow_lum: number[] = []
+    let vfx_parade_tog: number[] = []; let vfx_parade_hue: number[] = []; let vfx_parade_sat: number[] = []; let vfx_parade_lum: number[] = []; let vfx_parade_colors: number[] = [];
+    let vfx_last_tog: number[] = []; let vfx_last_hue: number[] = []; let vfx_last_sat: number[] = []; let vfx_last_lum: number[] = []
+    let vfx_master_tog: number[] = []; let vfx_master_hue: number[] = []; let vfx_master_sat: number[] = []; let vfx_master_lum: number[] = []; let vfx_master_effect: number[] = [];
+    let vfx_light_count = 0
 
     //% shim=sendBufferAsm
-    function sendBuffer(buf: Buffer, pin: DigitalPin) {
-    }
+    function sendBuffer(buf: Buffer, pin: DigitalPin) { }
 
     export class Strip {
         buf: Buffer;
@@ -66,6 +48,7 @@ namespace notLegos {
             this.buf[pixeloffset + 1] = Math.round(r * 255);
             this.buf[pixeloffset + 2] = Math.round(b * 255);
         }
+
         hueToRgb(p:number, q:number, t:number) {
             if (t < 0) t += 1;
             if (t > 1) t -= 1;
@@ -76,16 +59,20 @@ namespace notLegos {
         }
 
         show() { sendBuffer(this.buf, this.pin); }  //Send all the changes to the strip.
+
         length() { return this._length; }   //Gets the number of pixels declared on the strip
+
         shift(offset: number = 1): void { this.buf.shift(-offset * 3, this.start * 3, this._length * 3) }   //Shift LEDs forward and clear with zeros.
+
         rotate(offset: number = 1): void { this.buf.rotate(-offset * 3, this.start * 3, this._length * 3) } //Rotate LEDs forward
+
         setPin(pin: DigitalPin): void {
             this.pin = pin;
             pins.digitalWritePin(this.pin, 0);  // don't yield to avoid races on initialization
         }
     }
 
-    export function create(thePin: DigitalPin, numleds: number): Strip {
+    function create(thePin: DigitalPin, numleds: number): Strip {
         let strip = new Strip();
         strip.buf = pins.createBuffer(numleds * 3);
         strip.start = 0;
@@ -93,17 +80,6 @@ namespace notLegos {
         strip.setPin(thePin)
         return strip;
     }
-
-    let NeoSock: Strip = null; let NeoScore: Strip = null; let NeoWheel: Strip = null; let NeoKong: Strip = null; let NeoStrip: Strip = null; let NeoBrick: Strip = null
-    let vfx_mine_tog: number[] = []; let vfx_mine_hue: number[] = []; let vfx_mine_sat: number[] = []; let vfx_mine_lum: number[] = []
-    let vfx_fire_tog: number[] = []; let vfx_fire_hue: number[] = []; let vfx_fire_sat: number[] = []; let vfx_fire_lum: number[] = []; let vfx_fire_colors: number[] = []
-    let vfx_indicate_tog: number[] = []; let vfx_indicate_hue: number[] = []; let vfx_indicate_sat: number[] = []; let vfx_indicate_lum: number[] = [];
-    let vfx_idle_tog: number[] = []; let vfx_idle_hue: number[] = []; let vfx_idle_sat: number[] = []; let vfx_idle_lum: number[] = []
-    let vfx_glow_tog: number[] = []; let vfx_glow_hue: number[] = []; let vfx_glow_sat: number[] = []; let vfx_glow_lum: number[] = []
-    let vfx_parade_tog: number[] = []; let vfx_parade_hue: number[] = []; let vfx_parade_sat: number[] = []; let vfx_parade_lum: number[] = []; let vfx_parade_colors: number[] = [];
-    let vfx_last_tog: number[] = []; let vfx_last_hue: number[] = []; let vfx_last_sat: number[] = []; let vfx_last_lum: number[] = []
-    let vfx_master_tog: number[] = []; let vfx_master_hue: number[] = []; let vfx_master_sat: number[] = []; let vfx_master_lum: number[] = []; let vfx_master_effect: number[] = [];
-    let vfx_light_count = 0
 
     //% blockId=NL_PIXEL_CastleSay
     //% subcategory="Neopixel" Group="Neopixel"
@@ -137,55 +113,32 @@ namespace notLegos {
         NeoKong = create(kongPin, 4)
         vfx_light_count = 20 + 8 + 4
         vfxInit()
-        vfx_indicate_hue[0]=hues.cyan   //spot h
-        vfx_indicate_hue[1]=hues.cyan   //spot h
-        vfx_indicate_hue[2] = hues.pink //spot f
-        vfx_indicate_hue[3] = hues.pink //spot f
+        vfx_indicate_hue[0]=hues.cyan; vfx_indicate_hue[1]=hues.cyan   //spot h
+        vfx_indicate_hue[2] = hues.pink; vfx_indicate_hue[3] = hues.pink //spot f
         vfx_indicate_hue[26] = hues.pink   //shell brick
-        vfx_indicate_hue[4] = hues.orange   //spot d
-        vfx_indicate_hue[5] = hues.orange   //spot d
+        vfx_indicate_hue[4] = hues.orange; vfx_indicate_hue[5] = hues.orange   //spot d
         vfx_indicate_hue[21] = hues.orange   //cannon brick
         vfx_indicate_hue[25] = hues.orange   //bomb brick
-        vfx_indicate_hue[6] = hues.yellow   //spot b
-        vfx_indicate_hue[7] = hues.yellow   //spot b
-        vfx_indicate_hue[8] = hues.red  //spot a
-        vfx_indicate_hue[9] = hues.red  //spot a
-        vfx_indicate_hue[10] = hues.red  //spot a
-        vfx_indicate_hue[11] = hues.red  //spot a
-        vfx_indicate_hue[20] = hues.red  //wheel brick
-        vfx_indicate_hue[27] = hues.red  //wheel brick
-        vfx_indicate_hue[12] = hues.blue    //spot c
-        vfx_indicate_hue[13] = hues.blue    //spot c
-        vfx_indicate_hue[14] = hues.cyan    //spot e
-        vfx_indicate_hue[15] = hues.cyan    //spot e
-        vfx_indicate_hue[16] = hues.purple  //spot g
-        vfx_indicate_hue[17] = hues.purple  //spot g
+        vfx_indicate_hue[6] = hues.yellow; vfx_indicate_hue[7] = hues.yellow   //spot b
+        vfx_indicate_hue[8] = hues.red; vfx_indicate_hue[9] = hues.red; vfx_indicate_hue[10] = hues.red; vfx_indicate_hue[11] = hues.red  //spot a
+        vfx_indicate_hue[20] = hues.red; vfx_indicate_hue[27] = hues.red  //wheel bricks
+        vfx_indicate_hue[12] = hues.blue; vfx_indicate_hue[13] = hues.blue    //spot c
+        vfx_indicate_hue[14] = hues.cyan; vfx_indicate_hue[15] = hues.cyan    //spot e
+        vfx_indicate_hue[16] = hues.purple; vfx_indicate_hue[17] = hues.purple  //spot g
         vfx_indicate_hue[24] = hues.purple  //ghost brick
-        vfx_indicate_hue[18] = hues.green   //spot i
-        vfx_indicate_hue[19] = hues.green   //spot i
-        vfx_indicate_hue[28] = hues.green   //kong
-        vfx_indicate_hue[29] = hues.green   //kong
-        vfx_indicate_hue[30] = hues.green   //kong
-        vfx_indicate_hue[31] = hues.green   //kong
-        vfx_indicate_hue[22] = hues.yellow  //dragon brick
-        vfx_indicate_hue[23] = hues.yellow  //dragon brick
-        vfx_indicate_tog[0] = 1 //spot h
-        vfx_indicate_tog[1] = 1 //spot h
-        vfx_indicate_tog[2] = 1 //spot f
-        vfx_indicate_tog[3] = 1 //spot f
-        vfx_indicate_tog[4] = 1 //spot d
-        vfx_indicate_tog[5] = 1 //spot d
-        vfx_indicate_tog[6] = 1 //spot b
-        vfx_indicate_tog[7] = 1 //spot b
-        vfx_indicate_tog[8] = 1 //spot a
-        vfx_indicate_tog[9] = 1 //spot a
-        vfx_indicate_tog[22] = 1    //wheel brick
-        vfx_indicate_tog[27] = 1    //wheel brick
+        vfx_indicate_hue[18] = hues.green; vfx_indicate_hue[19] = hues.green   //spot i
+        vfx_indicate_hue[28] = hues.green; vfx_indicate_hue[29] = hues.green; vfx_indicate_hue[30] = hues.green; vfx_indicate_hue[31] = hues.green   //kong
+        vfx_indicate_hue[22] = hues.yellow; vfx_indicate_hue[23] = hues.yellow  //dragon brick
+        vfx_indicate_tog[0] = 1; vfx_indicate_tog[1] = 1 //spot h
+        vfx_indicate_tog[2] = 1; vfx_indicate_tog[3] = 1 //spot f
+        vfx_indicate_tog[4] = 1; vfx_indicate_tog[5] = 1 //spot d
+        vfx_indicate_tog[6] = 1; vfx_indicate_tog[7] = 1 //spot b
+        vfx_indicate_tog[8] = 1; vfx_indicate_tog[9] = 1 //spot a
+        vfx_indicate_tog[22] = 1; vfx_indicate_tog[27] = 1    //wheel bricks
         vfx_indicate_tog[21] = 1    //cannon brick
         vfx_indicate_tog[25] = 1    //bomb brick
         vfx_indicate_tog[26] = 1    //shell brick
-        vfx_indicate_tog[31] = 1    //kong
-        vfx_indicate_tog[30] = 1    //kong
+        vfx_indicate_tog[31] = 1; vfx_indicate_tog[30] = 1    //kong
         
         // setEffect(vfxRegion.CastleDoAll, vfxEffect.indicate)
     }
@@ -240,7 +193,6 @@ namespace notLegos {
         }
     }
 
-
     //% blockId=NL_PIXEL_ResetVFX
     //% subcategory="Neopixel" Group="Neopixel"
     //% block="Reset VFX %effect"
@@ -255,20 +207,27 @@ namespace notLegos {
                 vfx_idle_sat[index]=100
                 vfx_idle_lum[index]=50
             }
+        } else if (effect = vfxEffect.glow){
+            for (let index = 0; index < vfx_light_count; index++) {
+                vfx_glow_tog[index] = 0
+                vfx_glow_hue[index] = 50
+                vfx_glow_sat[index] = 0
+                vfx_glow_lum[index] = 0
+            }
+        } else if (effect = vfxEffect.mine) {
+            for (let index = 0; index < vfx_light_count; index++) {
+                vfx_mine_tog[index] = 0
+                vfx_mine_hue[index] = hues.red
+                vfx_mine_sat[index] = 100
+                vfx_mine_lum[index] = 50
+            }
+        } else if (effect = vfxEffect.indicate) {
+            for (let index = 0; index < vfx_light_count; index++) {
+                vfx_indicate_tog[index] = 0
+                vfx_indicate_sat[index] = 100
+                vfx_indicate_lum[index] = 50
+            }
         }
-    }
-
-
-    export enum hues{
-        red=0,
-        orange=15,
-        yellow=40,
-        lime=85,
-        green=110,
-        cyan=170,
-        blue=240,
-        purple=260,
-        pink=310
     }
 
     //% blockId=NL_PIXEL_CastleSayTick
@@ -284,7 +243,6 @@ namespace notLegos {
         idleTick()
         mineTick()
     }
-
 
     //% blockId=NL_PIXEL_CastleDoTick
     //% subcategory="Neopixel" Group="Neopixel"
@@ -393,7 +351,6 @@ namespace notLegos {
         }
     }
 
-
     function fireTick(): void {
         for (let index = 0; index < vfx_light_count; index++) {
             let thisLum = vfx_fire_lum[index]
@@ -441,7 +398,6 @@ namespace notLegos {
             }
         }
     }
-
 
     function vfxPrepareMaster(): void{
         for (let index = 0; index < vfx_light_count; index++) {
@@ -607,18 +563,6 @@ namespace notLegos {
         CastleDoAll
     }
 
-    export enum vfxEffect{
-        parade = 0,
-        fire = 1,
-        indicate = 2,
-        idle = 3,
-        glow = 4,
-        mine = 5,
-        off = 6
-    }
-
-
-
 /// END NEOPIXEL ///
 
 
@@ -656,6 +600,7 @@ namespace notLegos {
 
 /// BEGIN MP3 ///
 
+    export enum playType { Play = 0x0D, Stop = 0x16, PlayNext = 0x01, PlayPrevious = 0x02, Pause = 0x0E }
     let Start_Byte = 0x7E
     let Version_Byte = 0xFF
     let Command_Length = 0x06
@@ -676,31 +621,44 @@ namespace notLegos {
     let mp3playerPin: SerialPin
     let mp3playerVol = 0
     let mp3sfxVol = 0
+    let isPot = false
+    let potPin = AnalogPin.P0
+    let masterVolume = 25
+
+    //% blockId=NL_SENSOR_TrimpotSet
+    //% subcategory="Sensors" Group="Sensors"
+    //% block="set volume control pot at %aPin"
+    export function potSet(aPin: AnalogPin): void {
+        potPin = aPin
+        isPot = true
+        masterVolume = potRead()
+    }
+
+    function potRead() {
+        if (isPot) { return Math.round(pins.map(pins.analogReadPin(potPin), 0, 1023, 0, 30)) }
+        else { return 5 }
+    }
 
     function mp3_checkSum(): void {
         let total = 0;
-        for (let i = 1; i < 7; i++) {
-            total += dataArr[i]
-        }
+        for (let i = 1; i < 7; i++) { total += dataArr[i] }
         total = 65536 - total
         lowByte = total & 0xFF;
         highByte = total >> 8;
         dataArr[7] = highByte
         dataArr[8] = lowByte
     }
+
     function mp3_sendData(): void {
         let myBuff = pins.createBuffer(10);
-        for (let i = 0; i < 10; i++) {
-            myBuff.setNumber(NumberFormat.UInt8BE, i, dataArr[i])
-        }
+        for (let i = 0; i < 10; i++) { myBuff.setNumber(NumberFormat.UInt8BE, i, dataArr[i]) }
         serial.writeBuffer(myBuff)
         basic.pause(20) // Was 100; problematic at 10
     }
+
     function mp3_sendDataFast(): void {
         let myBuff = pins.createBuffer(10);
-        for (let i = 0; i < 10; i++) {
-            myBuff.setNumber(NumberFormat.UInt8BE, i, dataArr[i])
-        }
+        for (let i = 0; i < 10; i++) { myBuff.setNumber(NumberFormat.UInt8BE, i, dataArr[i]) }
         serial.writeBuffer(myBuff)
     }
 
@@ -924,30 +882,9 @@ namespace notLegos {
 
 /// BEGIN KONG MOTORS ///
     const kong_address = 0x10
-    export enum MotorList {
-        M1,
-        M2
-    }
-
-    export enum motors{
-        redrack=16,   //s7
-        shark=4,     //s1
-        ghost=5,     //s2
-        cannon=8,    //s5
-        oarrack=7,  //s4
-        shell=6,     //s3
-        door=3,      //s0
-        dragon=9,    //s6
-        wheel=1,     //m1
-        fan=2       //m2
-    }
-    export enum motorState {
-        min,
-        max,
-        mid
-    }
-
-
+    export enum MotorList { M1=1, M2=2 }
+    export enum motors{ redrack=16, shark=4, ghost=5, cannon=8, oarrack=7, shell=6, door=3, dragon=9, wheel=1, fan=2 }
+    export enum motorState { min, max, mid }
 
     //% blockId=NL_MOTOR_Set 
     //% block="Set %motor to %state"
@@ -978,12 +915,12 @@ namespace notLegos {
             if (state == motorState.min) { servoSet(motor, servo_dragon_min) }
             else if (state == motorState.max) { servoSet(motor, servo_dragon_max) }
         } if (motor == motors.wheel) {
-            if (state == motorState.min) { ksetMotorSpeed(MotorList.M1, motor_wheel_min) }
-            else if (state == motorState.max) { ksetMotorSpeed(MotorList.M1, motor_wheel_max) }
+            if (state == motorState.min) { motorSpeed(MotorList.M1, motor_wheel_min) }
+            else if (state == motorState.max) { motorSpeed(MotorList.M1, motor_wheel_max) }
         } if (motor == motors.fan) {
-            if (state == motorState.min) { ksetMotorSpeed(MotorList.M2, motor_fan_min) }
-            else if (state == motorState.mid) { ksetMotorSpeed(MotorList.M2, motor_fan_mid) }
-            else if (state == motorState.max) { ksetMotorSpeed(MotorList.M2, motor_fan_max) }
+            if (state == motorState.min) { motorSpeed(MotorList.M2, motor_fan_min) }
+            else if (state == motorState.mid) { motorSpeed(MotorList.M2, motor_fan_mid) }
+            else if (state == motorState.max) { motorSpeed(MotorList.M2, motor_fan_max) }
         }
     }
 
@@ -1007,24 +944,21 @@ namespace notLegos {
     let motor_fan_min = 0; let motor_fan_mid = 12; let motor_fan_max = 15
     let servo_dragon_min = 90; let servo_dragon_max = 79
 
-    export enum ServoList {
-        // S0=0,
-        // S1=1,
-        // S2=2,
-        // S3=3,
-        // S4=4,
-        // S5=5,
-        // S6=6,
-        // S7=7
-        S0 = 3,
-        S1 = 4,
-        S2 = 5,
-        S3 = 6,
-        S4 = 7,
-        S5 = 8,
-        S6 = 9,
-        S7 = 16
+
+    export function motorSpeed(motor: MotorList, speed: number): void {
+        let buf = pins.createBuffer(4);
+        buf[0]=motor
+        buf[1] = 1;
+        if (speed < 0) {
+            buf[1] = 2;
+            speed = speed * -1
+        }
+        buf[2] = speed;
+        buf[3] = 0;
+        pins.i2cWriteBuffer(kong_address, buf);
     }
+
+
 
     //% blockId=kongSetMotorSpeed block="Set motor %motor speed to %speed"
     //% subcategory="Motor" group="Motor"
@@ -1059,31 +993,50 @@ namespace notLegos {
         }
     }
 
-    //% blockId=kstopMotor block="Stop motor %motor"
-    //% subcategory="Motor" group="Motor"
-    export function stopMotor(motor: MotorList): void { ksetMotorSpeed(motor, 0);  }
 
-    //% blockId=ksetServoangle block="Set servo %servo angle to %angle"
-    //% angle.shadow="protractorPicker"
-    //% subcategory="Motor" group="Motor"
-    export function setServoangle(servo: ServoList, angle: number): void {
-        let buf = pins.createBuffer(4);
-        buf[0] = servo;
-        // if (servo == 0) { buf[0] = 0x03; }
-        // if (servo == 1) { buf[0] = 0x04; }
-        // if (servo == 2) { buf[0] = 0x05; }
-        // if (servo == 3) { buf[0] = 0x06; }
-        // if (servo == 4) { buf[0] = 0x07; }
-        // if (servo == 5) { buf[0] = 0x08; }
-        // if (servo == 6) { buf[0] = 0x09; }
-        // if (servo == 7) { buf[0] = 0x10; }
-        buf[1] = angle;
-        buf[2] = 0;
-        buf[3] = 0;
-        pins.i2cWriteBuffer(kong_address, buf);
-    }
+
 /// END KONG MOTORS ///
 
-    // Enum - To Support MP3
-    export enum playType { Play = 0x0D,Stop = 0x16,PlayNext = 0x01,PlayPrevious = 0x02,Pause = 0x0E }
+
+/// BEGIN RELAYS ///
+
+    export enum fogLevels { none = 0, light = 1, medium = 2, heavy = 3 }
+    export enum sockState { dancing = 1, still = 0 }
+
+    //% blockId=NL_RELAY_FogSet 
+    //% block="set fog level to %level"
+    //% subcategory="Motor" group="Motor"
+    export function setFog(fog:fogLevels):void{
+        if (fog == fogLevels.none){
+            pins.digitalWritePin(DigitalPin.P2, 1)
+            pins.digitalWritePin(DigitalPin.P8, 1)
+            pins.digitalWritePin(DigitalPin.P13, 1)
+        } else if (fog == fogLevels.light){
+            pins.digitalWritePin(DigitalPin.P2, 1)
+            pins.digitalWritePin(DigitalPin.P8, 1)
+            pins.digitalWritePin(DigitalPin.P13, 0)
+        } else if (fog == fogLevels.medium) {
+            pins.digitalWritePin(DigitalPin.P2, 0)
+            pins.digitalWritePin(DigitalPin.P8, 1)
+            pins.digitalWritePin(DigitalPin.P13, 0)
+        } else if (fog == fogLevels.heavy) {
+            pins.digitalWritePin(DigitalPin.P2, 0)
+            pins.digitalWritePin(DigitalPin.P8, 0)
+            pins.digitalWritePin(DigitalPin.P13, 0)
+        }
+    }
+
+    //% blockId=NL_RELAY_SockSet
+    //% block="set dancing sock to %sockState"
+    //% subcategory="Motor" group="Motor"
+    export function setSock(state: sockState): void {
+        if(state==sockState.dancing){ pins.digitalWritePin(DigitalPin.P12, 0) }
+        else{ pins.digitalWritePin(DigitalPin.P12, 1) }
+    }
+
+/// END RELAYS ///
+
+
+
+
 }
