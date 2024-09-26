@@ -115,7 +115,16 @@ namespace notLegos {
         NeoWheel = create(wheelPin, 18)
         vfx_light_count = 8 + 8 + 18
         vfxInit()
-        setEffect(vfxRegion.CastleSayAll,vfxEffect.parade)
+        vfx_indicate_hue[30]=hues.green
+        vfx_indicate_hue[31] = hues.yellow
+        vfx_indicate_hue[32] = hues.orange
+        vfx_indicate_hue[33] = hues.red
+        vfx_indicate_hue[26] = hues.red
+        vfx_indicate_hue[27] = hues.red
+        vfx_indicate_hue[28] = hues.red
+        vfx_indicate_hue[29] = hues.red
+
+        setEffect(vfxRegion.CastleSayAll, vfxEffect.indicate)
     }
 
     //% blockId=NL_PIXEL_CastleDo
@@ -178,7 +187,7 @@ namespace notLegos {
         vfx_indicate_tog[31] = 1    //kong
         vfx_indicate_tog[30] = 1    //kong
         
-        setEffect(vfxRegion.CastleDoAll, vfxEffect.mine)
+        setEffect(vfxRegion.CastleDoAll, vfxEffect.indicate)
     }
 
     function vfxInit(): void{
@@ -577,7 +586,8 @@ namespace notLegos {
         indicate = 2,
         idle = 3,
         glow = 4,
-        mine = 5
+        mine = 5,
+        off = 6
     }
 
 
@@ -874,9 +884,7 @@ namespace notLegos {
         }
     }
 
-
 /// END SOUND BANK ///
-
 
     export enum mp3type { music, player, sfxvoice }
     export enum musicGenre { intro, tutorial, awaiting, level, won, lost }
