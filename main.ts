@@ -32,6 +32,22 @@ function printSay () {
         pushPrint(2, notLegos.getVolumes())
     }
 }
+radio.onReceivedValue(function (name, value) {
+    if (name.substr(0, btToken.length) == btToken) {
+        theName = name.substr(btToken.length, name.length - btToken.length)
+        if (isCastleSay) {
+            if (theName == "ready") {
+                Connected.showUserText(7, "bt: " + theName + "=" + value)
+                notLegos.mp3musicPlay(notLegos.musicGenre.awaiting)
+            }
+        } else {
+            if (theName == "ready") {
+                Connected.showUserText(1, "bt: " + theName + "=" + value)
+                radio.sendValue("" + btToken + "ready", 1)
+            }
+        }
+    }
+})
 input.onLogoEvent(TouchButtonEvent.Touched, function () {
     notLegos.mp3musicPlay(notLegos.musicGenre.awaiting)
 })
@@ -39,6 +55,7 @@ let lastHue = 0
 let lastGesture = 0
 let lastSonarRead = 0
 let iBegan = 0
+let theName = ""
 let textIn = ""
 let limitNines = 0
 let pushPrint2 = ""
@@ -49,12 +66,15 @@ let lastLaserL = 0
 let lastLaserR = 0
 let digits: Connected.TM1637LEDs = null
 let isCastleSay = false
+let btToken = ""
 let lastVolumeRead = 0
 pins.setAudioPinEnabled(false)
 led.enable(false)
+btToken = "KC$"
 if (notLegos.SonarFirstRead(DigitalPin.P8, DigitalPin.P9) > 0) {
     isCastleSay = true
 }
+radio.setGroup(171)
 Connected.showUserText(8, "SAY: " + convertToText(isCastleSay))
 if (isCastleSay) {
     pins.digitalWritePin(DigitalPin.P5, 1)
@@ -73,6 +93,7 @@ if (isCastleSay) {
     basic.pause(20)
     notLegos.updateVolumeGlobal()
     notLegos.castleSayLights(DigitalPin.P11, DigitalPin.P12, DigitalPin.P13)
+    radio.sendValue("" + btToken + "ready", 0)
 } else {
     pins.digitalWritePin(DigitalPin.P2, 1)
     pins.digitalWritePin(DigitalPin.P8, 1)
