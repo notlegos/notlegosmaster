@@ -925,28 +925,105 @@ namespace notLegos {
 /// BEGIN KONG MOTORS ///
     const kong_address = 0x10
     export enum MotorList {
-        //% block="M1"
         M1,
-        //% block="M2"
         M2
     }
+
+    export enum motors{
+        redrack=16,   //s7
+        shark=4,     //s1
+        ghost=5,     //s2
+        cannon=8,    //s5
+        oarrack=7,  //s4
+        shell=6,     //s3
+        door=3,      //s0
+        dragon=9,    //s6
+        wheel=1,     //m1
+        fan=2       //m2
+    }
+    export enum motorState {
+        min,
+        max,
+        mid
+    }
+
+
+
+    //% blockId=NL_MOTOR_Set 
+    //% block="Set %motor to %state"
+    //% subcategory="Motor" group="Motor"
+    export function motorSet(motor:motors, state:motorState):void{
+        if (motor == motors.redrack){
+            if (state == motorState.min){ servoSet(motor, servo_redrack_min) } 
+            else if (state == motorState.max){ servoSet(motor, servo_redrack_max) }
+        } if (motor == motors.shark) {
+            if (state == motorState.min) { servoSet(motor, servo_shark_min) }
+            else if (state == motorState.max) { servoSet(motor, servo_shark_max) }
+        } if (motor == motors.ghost) {
+            if (state == motorState.min) { servoSet(motor, servo_ghost_min) }
+            else if (state == motorState.max) { servoSet(motor, servo_ghost_max) }
+        } if (motor == motors.cannon) {
+            if (state == motorState.min) { servoSet(motor, servo_cannon_min) }
+            else if (state == motorState.max) { servoSet(motor, servo_cannon_max) }
+        } if (motor == motors.oarrack) {
+            if (state == motorState.min) { servoSet(motor, servo_oarrack_min) }
+            else if (state == motorState.max) { servoSet(motor, servo_oarrack_max) }
+        } if (motor == motors.shell) {
+            if (state == motorState.min) { servoSet(motor, servo_shell_min) }
+            else if (state == motorState.max) { servoSet(motor, servo_shell_max) }
+        } if (motor == motors.door) {
+            if (state == motorState.min) { servoSet(motor, servo_door_min) }
+            else if (state == motorState.max) { servoSet(motor, servo_door_max) }
+        } if (motor == motors.dragon) {
+            if (state == motorState.min) { servoSet(motor, servo_dragon_min) }
+            else if (state == motorState.max) { servoSet(motor, servo_dragon_max) }
+        } if (motor == motors.wheel) {
+            if (state == motorState.min) { ksetMotorSpeed(MotorList.M1, motor_wheel_min) }
+            else if (state == motorState.max) { ksetMotorSpeed(MotorList.M1, motor_wheel_max) }
+        } if (motor == motors.fan) {
+            if (state == motorState.min) { ksetMotorSpeed(MotorList.M2, motor_fan_min) }
+            else if (state == motorState.mid) { ksetMotorSpeed(MotorList.M2, motor_fan_mid) }
+            else if (state == motorState.max) { ksetMotorSpeed(MotorList.M2, motor_fan_max) }
+        }
+    }
+
+    export function servoSet(servo: motors, angle: number): void {
+        let buf = pins.createBuffer(4);
+        buf[0] = servo;
+        buf[1] = angle;
+        buf[2] = 0;
+        buf[3] = 0;
+        pins.i2cWriteBuffer(kong_address, buf);
+    }
+
+    let motor_wheel_max = 12; let motor_wheel_min = 0
+    let servo_redrack_max = 150; let servo_redrack_min = 100
+    let servo_cannon_min = 135; let servo_cannon_max = 65
+    let servo_shark_min = 20; let servo_shark_max = 85
+    let servo_oarrack_min = 65; let servo_oarrack_max = 90
+    let servo_ghost_min = 110; let servo_ghost_max = 40
+    let servo_shell_min = 170; let servo_shell_max = 100
+    let servo_door_min = 50; let servo_door_max = 140
+    let motor_fan_min = 0; let motor_fan_mid = 12; let motor_fan_max = 15
+    let servo_dragon_min = 90; let servo_dragon_max = 79
+
     export enum ServoList {
-        //% block="S0" enumval=0
-        S0,
-        //% block="S1" enumval=1
-        S1=1,
-        //% block="S2" enumval=2
-        S2=2,
-        //% block="S3" enumval=3
-        S3=3,
-        //% block="S4" enumval=4
-        S4=4,
-        //% block="S5" enumval=5
-        S5=5,
-        //% block="S6" enumval=6
-        S6=6,
-        //% block="S7" enumval=7
-        S7=7
+        // S0=0,
+        // S1=1,
+        // S2=2,
+        // S3=3,
+        // S4=4,
+        // S5=5,
+        // S6=6,
+        // S7=7
+        S0 = 3,
+        S1 = 4,
+        S2 = 5,
+        S3 = 6,
+        S4 = 7,
+        S5 = 8,
+        S6 = 9,
+        S7 = 16
     }
 
     //% blockId=kongSetMotorSpeed block="Set motor %motor speed to %speed"
@@ -991,14 +1068,15 @@ namespace notLegos {
     //% subcategory="Motor" group="Motor"
     export function setServoangle(servo: ServoList, angle: number): void {
         let buf = pins.createBuffer(4);
-        if (servo == 0) { buf[0] = 0x03; }
-        if (servo == 1) { buf[0] = 0x04; }
-        if (servo == 2) { buf[0] = 0x05; }
-        if (servo == 3) { buf[0] = 0x06; }
-        if (servo == 4) { buf[0] = 0x07; }
-        if (servo == 5) { buf[0] = 0x08; }
-        if (servo == 6) { buf[0] = 0x09; }
-        if (servo == 7) { buf[0] = 0x10; }
+        buf[0] = servo;
+        // if (servo == 0) { buf[0] = 0x03; }
+        // if (servo == 1) { buf[0] = 0x04; }
+        // if (servo == 2) { buf[0] = 0x05; }
+        // if (servo == 3) { buf[0] = 0x06; }
+        // if (servo == 4) { buf[0] = 0x07; }
+        // if (servo == 5) { buf[0] = 0x08; }
+        // if (servo == 6) { buf[0] = 0x09; }
+        // if (servo == 7) { buf[0] = 0x10; }
         buf[1] = angle;
         buf[2] = 0;
         buf[3] = 0;
