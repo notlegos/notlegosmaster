@@ -45,39 +45,6 @@ namespace notLegos {
         start: number; // start offset in LED strip
         _length: number; // number of LEDs
 
-        //% blockId="NL_PIXEL_SetHSL" 
-        //% block="%strip|set pixel color at %pixeloffset|to h%h s%s l%l"
-        //% subcategory="Neopixel" Group="Neopixel"
-        setPixelHSL(pixeloffset: number, h: number, s: number, l: number): void {
-            if (pixeloffset < 0 || pixeloffset >= this._length)
-                return;
-            pixeloffset = (pixeloffset + this.start) * 3;
-            h = Math.round(h) % 360;
-            s = Math.clamp(0, 99, Math.round(s));
-            l = Math.clamp(0, 99, Math.round(l));
-            let c = Math.idiv((((100 - Math.abs(2 * l - 100)) * s) << 8), 10000); //chroma, [0,255]
-            let h1 = Math.idiv(h, 60);//[0,6]
-            let h2 = Math.idiv((h - h1 * 60) * 256, 60);//[0,255]
-            let x = (c * (256 - (Math.abs((((h1 % 2) << 8) + h2) - 256)))) >> 8;//[0,255], second largest component of this color
-            let r$: number;
-            let g$: number;
-            let b$: number;
-            if (h1 == 0) { r$ = c; g$ = x; b$ = 0; }
-            else if (h1 == 1) { r$ = x; g$ = c; b$ = 0; }
-            else if (h1 == 2) { r$ = 0; g$ = c; b$ = x; }
-            else if (h1 == 3) { r$ = 0; g$ = x; b$ = c; }
-            else if (h1 == 4) { r$ = x; g$ = 0; b$ = c; }
-            else if (h1 == 5) { r$ = c; g$ = 0; b$ = x; }
-            let m = Math.idiv((Math.idiv((l * 2 << 8), 100) - c), 2);
-            this.buf[pixeloffset + 0] = g$ + m;
-            this.buf[pixeloffset + 1] = r$ + m;
-            this.buf[pixeloffset + 2] = b$ + m;
-        }
-
-
-        //% blockId="NL_PIXEL_PreciseSetHSL" 
-        //% block="%strip|set pixel color at %pixeloffset|to h%h s%s l%l"
-        //% subcategory="Neopixel" Group="Neopixel"
         setPixelHSLPrecise(pixeloffset: number, h: number, s: number, l: number): void {
             if (pixeloffset < 0 || pixeloffset >= this._length)
                 return;
@@ -108,26 +75,10 @@ namespace notLegos {
             return p;
         }
 
-        //Send all the changes to the strip.
-        show() {
-            sendBuffer(this.buf, this.pin);
-        }
-
-        //Gets the number of pixels declared on the strip
-        length() {
-            return this._length;
-        }
-
-        //Shift LEDs forward and clear with zeros.
-        shift(offset: number = 1): void {
-            this.buf.shift(-offset * 3, this.start * 3, this._length * 3)
-        }
-
-        //Rotate LEDs forward
-        rotate(offset: number = 1): void {
-            this.buf.rotate(-offset * 3, this.start * 3, this._length * 3)
-        }
-
+        show() { sendBuffer(this.buf, this.pin); }  //Send all the changes to the strip.
+        length() { return this._length; }   //Gets the number of pixels declared on the strip
+        shift(offset: number = 1): void { this.buf.shift(-offset * 3, this.start * 3, this._length * 3) }   //Shift LEDs forward and clear with zeros.
+        rotate(offset: number = 1): void { this.buf.rotate(-offset * 3, this.start * 3, this._length * 3) } //Rotate LEDs forward
         setPin(pin: DigitalPin): void {
             this.pin = pin;
             pins.digitalWritePin(this.pin, 0);  // don't yield to avoid races on initialization
@@ -143,48 +94,15 @@ namespace notLegos {
         return strip;
     }
 
-    let NeoSock: Strip = null
-    let NeoScore: Strip = null
-    let NeoWheel: Strip = null
-    let NeoKong: Strip = null
-    let NeoStrip: Strip = null
-    let NeoBrick: Strip = null
-
-    let vfx_mine_tog: number[] = []
-    let vfx_mine_hue: number[] = []
-    let vfx_mine_sat: number[] = []
-    let vfx_mine_lum: number[] = []
-    let vfx_fire_tog: number[] = []
-    let vfx_fire_hue: number[] = []
-    let vfx_fire_sat: number[] = []
-    let vfx_fire_lum: number[] = []
-    let vfx_fire_colors: number[] = []
-    let vfx_indicate_tog: number[] = []
-    let vfx_indicate_hue: number[] = []
-    let vfx_indicate_sat: number[] = []
-    let vfx_indicate_lum: number[] = []
-    let vfx_idle_tog: number[] = []
-    let vfx_idle_hue: number[] = []
-    let vfx_idle_sat: number[] = []
-    let vfx_idle_lum: number[] = []
-    let vfx_glow_tog: number[] = []
-    let vfx_glow_hue: number[] = []
-    let vfx_glow_sat: number[] = []
-    let vfx_glow_lum: number[] = []
-    let vfx_parade_tog: number[] = []
-    let vfx_parade_hue: number[] = []
-    let vfx_parade_sat: number[] = []
-    let vfx_parade_lum: number[] = []
-    let vfx_parade_colors: number[] = []
-    let vfx_last_tog: number[] = []
-    let vfx_last_hue: number[] = []
-    let vfx_last_sat: number[] = []
-    let vfx_last_lum: number[] = []
-    let vfx_master_tog: number[] = []
-    let vfx_master_hue: number[] = []
-    let vfx_master_sat: number[] = []
-    let vfx_master_lum: number[] = []
-    let vfx_master_effect: number[] = []
+    let NeoSock: Strip = null; let NeoScore: Strip = null; let NeoWheel: Strip = null; let NeoKong: Strip = null; let NeoStrip: Strip = null; let NeoBrick: Strip = null
+    let vfx_mine_tog: number[] = []; let vfx_mine_hue: number[] = []; let vfx_mine_sat: number[] = []; let vfx_mine_lum: number[] = []
+    let vfx_fire_tog: number[] = []; let vfx_fire_hue: number[] = []; let vfx_fire_sat: number[] = []; let vfx_fire_lum: number[] = []; let vfx_fire_colors: number[] = []
+    let vfx_indicate_tog: number[] = []; let vfx_indicate_hue: number[] = []; let vfx_indicate_sat: number[] = []; let vfx_indicate_lum: number[] = [];
+    let vfx_idle_tog: number[] = []; let vfx_idle_hue: number[] = []; let vfx_idle_sat: number[] = []; let vfx_idle_lum: number[] = []
+    let vfx_glow_tog: number[] = []; let vfx_glow_hue: number[] = []; let vfx_glow_sat: number[] = []; let vfx_glow_lum: number[] = []
+    let vfx_parade_tog: number[] = []; let vfx_parade_hue: number[] = []; let vfx_parade_sat: number[] = []; let vfx_parade_lum: number[] = []; let vfx_parade_colors: number[] = [];
+    let vfx_last_tog: number[] = []; let vfx_last_hue: number[] = []; let vfx_last_sat: number[] = []; let vfx_last_lum: number[] = []
+    let vfx_master_tog: number[] = []; let vfx_master_hue: number[] = []; let vfx_master_sat: number[] = []; let vfx_master_lum: number[] = []; let vfx_master_effect: number[] = [];
     let vfx_light_count = 0
 
     //% blockId=NL_PIXEL_CastleSay
@@ -260,16 +178,13 @@ namespace notLegos {
         vfx_indicate_tog[31] = 1    //kong
         vfx_indicate_tog[30] = 1    //kong
         
-        setEffect(vfxRegion.CastleDoAll, vfxEffect.indicate)
+        setEffect(vfxRegion.CastleDoAll, vfxEffect.idle)
     }
 
     function vfxInit(): void{
         vfx_parade_colors = [hues.red, hues.orange, hues.yellow, hues.cyan, hues.blue, hues.purple]
         vfx_fire_colors = [hues.red, hues.red, hues.red, hues.red, hues.orange, hues.orange, hues.orange, hues.orange, hues.orange, hues.yellow]
         for (let index = 0; index < vfx_light_count; index++) {
-            if (index % 2 == 0){
-                vfx_idle_tog[index] = 0
-            }
              
             vfx_indicate_tog.push(0)
             vfx_indicate_lum.push(50)
@@ -280,34 +195,40 @@ namespace notLegos {
             vfx_mine_hue.push(50)
             vfx_mine_sat.push(100)
             vfx_mine_lum.push(50)
+
             vfx_fire_tog.push(randint(0, 1))
             vfx_fire_hue.push(vfx_fire_colors[randint(0, vfx_fire_colors.length - 1)])
             vfx_fire_sat.push(100)
             vfx_fire_lum.push(randint(30, 80))
-           
-            vfx_idle_tog.push(0)
-            vfx_idle_hue.push(50)
+
+            vfx_idle_tog.push(1)
+            if (index % 2 == 0) { vfx_idle_tog[index] = 0; }
+            vfx_idle_hue.push(265)
+            if (index % 2 == 0) { vfx_idle_hue[index] = 2; }
             vfx_idle_sat.push(100)
             vfx_idle_lum.push(50)
+
             vfx_glow_tog.push(0)
             vfx_glow_hue.push(50)
             vfx_glow_sat.push(0)
             vfx_glow_lum.push(0)
+
             vfx_parade_tog.push(randint(0, 1))
             vfx_parade_hue.push(vfx_parade_colors[randint(0, vfx_parade_colors.length-1)])
             vfx_parade_sat.push(100)
             vfx_parade_lum.push(randint(10, 65))
+
             vfx_last_tog.push(0)
             vfx_last_hue.push(50)
             vfx_last_sat.push(100)
             vfx_last_lum.push(50)
+
             vfx_master_tog.push(0)
             vfx_master_hue.push(0)
             vfx_master_sat.push(100)
             vfx_master_lum.push(50)
-            vfx_master_effect.push(vfxEffect.parade)
+            vfx_master_effect.push(vfxEffect.parade)    //leave this be!
         }
-
     }
 
     export enum hues{
@@ -332,6 +253,7 @@ namespace notLegos {
         glowTick()
         castleSayWrite()
         indicateTick()
+        idleTick()
     }
 
 
@@ -345,6 +267,7 @@ namespace notLegos {
         glowTick()
         castleDoWrite()
         indicateTick()
+        idleTick()
     }
 
     function paradeTick(): void{
@@ -369,6 +292,28 @@ namespace notLegos {
                     }
                     vfx_parade_hue[index] = nextHue
                     vfx_parade_lum[index] = thisLum - randint(0,10)
+                }
+            }
+        }
+    }
+
+    function idleTick(): void {
+        for (let index = 0; index < vfx_light_count; index++) {
+            let thisLum = vfx_idle_lum[index]
+            let thisHue = vfx_idle_hue[index]
+            let thisTog = vfx_idle_tog[index]
+            let nextHue = thisHue
+            if (thisTog == 0) {
+                if (thisHue < 265) {
+                    vfx_idle_hue[index] = thisHue + 1
+                } else if (thisHue >= 265) {
+                    vfx_idle_tog[index] = 1
+                }
+            } else if (thisTog == 1) {
+                if (thisHue > 2) {
+                    vfx_idle_hue[index] = thisHue - 1
+                } else if (thisHue <= 2) {
+                    vfx_idle_tog[index] = 0
                 }
             }
         }
