@@ -74,7 +74,11 @@ if (isCastleSay) {
     notLegos.updateVolumeGlobal()
     notLegos.castleSayLights(DigitalPin.P11, DigitalPin.P12, DigitalPin.P13)
 } else {
-	
+    pins.digitalWritePin(DigitalPin.P2, 1)
+    pins.digitalWritePin(DigitalPin.P8, 1)
+    pins.digitalWritePin(DigitalPin.P12, 1)
+    pins.digitalWritePin(DigitalPin.P13, 1)
+    notLegos.castleDoLights(DigitalPin.P14, DigitalPin.P15, DigitalPin.P16)
 }
 pushPrint1 = ""
 pushPrint2 = ""
@@ -96,7 +100,7 @@ loops.everyInterval(40, function () {
             lastHue = Connected.readColor()
             printSay()
         } else {
-        	
+            notLegos.castleDoTick()
         }
     }
     iTook = input.runningTime() - iBegan

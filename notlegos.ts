@@ -99,7 +99,6 @@ namespace notLegos {
             this.buf[pixeloffset + 1] = Math.round(r * 255);
             this.buf[pixeloffset + 2] = Math.round(b * 255);
         }
-
         hueToRgb(p:number, q:number, t:number) {
             if (t < 0) t += 1;
             if (t > 1) t -= 1;
@@ -148,8 +147,8 @@ namespace notLegos {
     let NeoScore: Strip = null
     let NeoWheel: Strip = null
     let NeoKong: Strip = null
-    let NeoStrips: Strip = null
-    let NeoBricks: Strip = null
+    let NeoStrip: Strip = null
+    let NeoBrick: Strip = null
 
     let vfx_mine_tog: number[] = []
     let vfx_mine_hue: number[] = []
@@ -198,7 +197,20 @@ namespace notLegos {
         NeoWheel = create(wheelPin, 18)
         vfx_light_count = 8 + 8 + 18
         vfxInit()
-        setEffect(vfxRegion.CastleSayAll,vfxEffect.glow)
+        setEffect(vfxRegion.CastleSayAll,vfxEffect.parade)
+    }
+
+    //% blockId=NL_PIXEL_CastleDo
+    //% subcategory="Neopixel" Group="Neopixel"
+    //% block="Strips:%spotPin  Bricks:%brickPin Kong Lights:%kongPin"
+    //% weight=100
+    export function castleDoLights(stripPin: DigitalPin, brickPin: DigitalPin, kongPin: DigitalPin): void {
+        NeoStrip = create(stripPin, 20)
+        NeoBrick = create(brickPin, 8)
+        NeoKong = create(kongPin, 4)
+        vfx_light_count = 20 + 8 + 4
+        vfxInit()
+        setEffect(vfxRegion.CastleDoAll, vfxEffect.indicate)
     }
 
     function vfxInit(): void{
@@ -210,6 +222,10 @@ namespace notLegos {
             } else{
 
             }
+            if(index)
+            vfx_indicate_lum.push(50)
+            vfx_indicate_tog.push(0)
+
 
             vfx_mine_tog.push(0)
             vfx_mine_hue.push(50)
@@ -219,10 +235,10 @@ namespace notLegos {
             vfx_fire_hue.push(vfx_fire_colors[randint(0, vfx_fire_colors.length - 1)])
             vfx_fire_sat.push(100)
             vfx_fire_lum.push(randint(30, 80))
-            vfx_indicate_tog.push(0)
+           
             vfx_indicate_hue.push(50)
             vfx_indicate_sat.push(100)
-            vfx_indicate_lum.push(50)
+            
             vfx_idle_tog.push(0)
             vfx_idle_hue.push(50)
             vfx_idle_sat.push(100)
@@ -243,7 +259,7 @@ namespace notLegos {
             vfx_master_hue.push(0)
             vfx_master_sat.push(100)
             vfx_master_lum.push(50)
-            vfx_master_effect.push(vfxEffect.indicate)
+            vfx_master_effect.push(vfxEffect.parade)
         }
     }
 
@@ -268,7 +284,18 @@ namespace notLegos {
         fireTick()
         glowTick()
         castleSayWrite()
+    }
 
+
+    //% blockId=NL_PIXEL_CastleDoTick
+    //% subcategory="Neopixel" Group="Neopixel"
+    //% block="Advance Castle Do lights"
+    //% weight=100
+    export function castleDoTick(): void {
+        paradeTick()
+        fireTick()
+        glowTick()
+        castleDoWrite()
     }
 
     function paradeTick(): void{
@@ -397,6 +424,26 @@ namespace notLegos {
         NeoScore.show()
     }
 
+    function castleDoWrite(): void {
+        vfxPrepareMaster()
+        let masterIndex = 0
+        for (let index = 0; index < NeoStrip.length(); index++) {
+            NeoStrip.setPixelHSLPrecise(index, vfx_master_hue[masterIndex], vfx_master_sat[masterIndex], vfx_master_lum[masterIndex])
+            masterIndex++
+        }
+        for (let index = 0; index < NeoBrick.length(); index++) {
+            NeoBrick.setPixelHSLPrecise(index, vfx_master_hue[masterIndex], vfx_master_sat[masterIndex], vfx_master_lum[masterIndex])
+            masterIndex++
+        }
+        for (let index = 0; index < NeoKong.length(); index++) {
+            NeoKong.setPixelHSLPrecise(index, vfx_master_hue[masterIndex], vfx_master_sat[masterIndex], vfx_master_lum[masterIndex])
+            masterIndex++
+        }
+        NeoStrip.show()
+        NeoBrick.show()
+        NeoKong.show()
+    }
+
     function setEffect(region:vfxRegion, effect:vfxEffect){
         if (region == vfxRegion.Score1){
             vfx_master_effect[30] = effect
@@ -415,30 +462,61 @@ namespace notLegos {
         } else if (region == vfxRegion.Score8) {
             vfx_master_effect[29] = effect
         } else if (region == vfxRegion.ScoreAll) {
-            for (let i = 26; i <= 33; i++) {
-                vfx_master_effect[i] = effect
-            }
+            for (let i = 26; i <= 33; i++) { vfx_master_effect[i] = effect };
         } else if (region == vfxRegion.SockAll) {
-            for (let i = 0; i <= 7; i++) {
-                vfx_master_effect[i] = effect
-            }
+            for (let i = 0; i <= 7; i++) { vfx_master_effect[i] = effect };
         } else if (region == vfxRegion.WheelInner) {
-            for (let i = 18; i <= 25; i++) {
-                vfx_master_effect[i] = effect
-            }
+            for (let i = 18; i <= 25; i++) { vfx_master_effect[i] = effect };
         } else if (region == vfxRegion.WheelOuter) {
-            for (let i = 8; i <= 17; i++) {
-                vfx_master_effect[i] = effect
-            }
+            for (let i = 8; i <= 17; i++) { vfx_master_effect[i] = effect };
         } else if (region == vfxRegion.WheelAll) {
-            for (let i=8; i <= 25; i++){
-                vfx_master_effect[i] = effect
-            }
+            for (let i=8; i <= 25; i++){ vfx_master_effect[i] = effect };
         } else if (region == vfxRegion.CastleSayAll) {
-            for (let i = 0; i <= 33; i++) {
-                vfx_master_effect[i] = effect
-            }
-        }       
+            for (let i = 0; i <= 33; i++) { vfx_master_effect[i] = effect };
+        } else if (region == vfxRegion.SpotA) {
+            for (let i = 8; i <= 11; i++) { vfx_master_effect[i] = effect };
+        } else if (region == vfxRegion.SpotB) {
+            for (let i = 6; i <= 7; i++) { vfx_master_effect[i] = effect };
+        } else if (region == vfxRegion.SpotC) {
+            for (let i = 12; i <= 13; i++) { vfx_master_effect[i] = effect };
+        } else if (region == vfxRegion.SpotD) {
+            for (let i = 4; i <= 5; i++) { vfx_master_effect[i] = effect };
+        } else if (region == vfxRegion.SpotE) {
+            for (let i = 14; i <= 15; i++) { vfx_master_effect[i] = effect };
+        } else if (region == vfxRegion.SpotF) {
+            for (let i = 2; i <= 3; i++) { vfx_master_effect[i] = effect };
+        } else if (region == vfxRegion.SpotG) {
+            for (let i = 16; i <= 17; i++) { vfx_master_effect[i] = effect };
+        } else if (region == vfxRegion.SpotH) {
+            for (let i = 0; i <= 1; i++) { vfx_master_effect[i] = effect };
+        } else if (region == vfxRegion.SpotI) {
+            for (let i = 18; i <= 19; i++) { vfx_master_effect[i] = effect };
+        } else if (region == vfxRegion.SpotAll) {
+            for (let i = 0; i <= 19; i++) { vfx_master_effect[i] = effect };
+        } else if (region == vfxRegion.BrickWheel) {
+            vfx_master_effect[20] = effect
+            vfx_master_effect[27] = effect
+        } else if (region == vfxRegion.BrickBomb) {
+            vfx_master_effect[25] = effect
+        } else if (region == vfxRegion.BrickShell) {
+            vfx_master_effect[26] = effect
+        } else if (region == vfxRegion.BrickGhost) {
+            vfx_master_effect[24] = effect
+        } else if (region == vfxRegion.BrickDragon) {
+            for (let i = 22; i <= 23; i++) { vfx_master_effect[i] = effect };
+        } else if (region == vfxRegion.BrickCannon) {
+            vfx_master_effect[21] = effect
+        } else if (region == vfxRegion.BrickAll) {
+            for (let i = 20; i <= 27; i++) { vfx_master_effect[i] = effect };
+        } else if (region == vfxRegion.KongFront) {
+            for (let i = 28; i <= 29; i++) { vfx_master_effect[i] = effect };
+        } else if (region == vfxRegion.KongBack) {
+            for (let i = 30; i <= 31; i++) { vfx_master_effect[i] = effect };
+        } else if (region == vfxRegion.KongAll) {
+            for (let i = 28; i <=31; i++) { vfx_master_effect[i] = effect };
+        } else if (region == vfxRegion.CastleDoAll) {
+            for (let i = 0; i < vfx_light_count; i++) { vfx_master_effect[i] = effect };
+        } 
     }
 
     export enum vfxRegion{
@@ -446,7 +524,7 @@ namespace notLegos {
         SockAll,
         WheelInner, WheelOuter, WheelAll,
         KongFront, KongBack, KongAll,
-        BrickWheel, BrickShark, BrickBomb, BrickShell, BrickGhost, BrickDragon, BrickCannon, BrickAll,
+        BrickWheel, BrickBomb, BrickShell, BrickGhost, BrickDragon, BrickCannon, BrickAll,
         SpotA, SpotB, SpotC, SpotD, SpotE, SpotF, SpotG, SpotH, SpotI, SpotAll,
         CastleSayAll,
         CastleDoAll
