@@ -26,6 +26,9 @@ function padLimit (numberIn: number, digits: number) {
     }
     return textIn
 }
+function buttonPress (button: string) {
+    Connected.showUserText(6, "button: " + button)
+}
 function printSay () {
     if (isCastleSay) {
         pushPrint(1, "R" + lastLaserR + " C" + lastLaserC + " L" + lastLaserL)
@@ -53,21 +56,24 @@ radio.onReceivedValue(function (name, value) {
     }
 })
 input.onLogoEvent(TouchButtonEvent.Touched, function () {
-    notLegos.mp3musicPlay(notLegos.musicGenre.awaiting)
+    if (isCastleSay) {
+        notLegos.mp3musicPlay(notLegos.musicGenre.awaiting)
+    }
 })
-let lastHue = 0
-let lastGesture = 0
-let lastSonarRead = 0
 let iBegan = 0
 let theName = ""
 let textIn = ""
 let limitNines = 0
 let pushPrint2 = ""
 let pushPrint1 = ""
+let buttonRow = 0
 let trackNo = 0
 let lastLaserC = 0
 let lastLaserL = 0
 let lastLaserR = 0
+let lastHue = 0
+let lastGesture = 0
+let lastSonarRead = 0
 let digits: Connected.TM1637LEDs = null
 let isCastleSay = false
 let btToken = ""
@@ -87,6 +93,9 @@ if (isCastleSay) {
     DigitalPin.P7,
     DigitalPin.P6
     )
+    lastSonarRead = 0
+    lastGesture = 0
+    lastHue = 0
     lastLaserR = 0
     lastLaserL = 0
     lastLaserC = 0
@@ -103,6 +112,7 @@ if (isCastleSay) {
     pins.digitalWritePin(DigitalPin.P8, 1)
     pins.digitalWritePin(DigitalPin.P12, 1)
     pins.digitalWritePin(DigitalPin.P13, 1)
+    buttonRow = 0
     notLegos.motorSet(notLegos.motors.redrack, notLegos.motorState.min)
     notLegos.motorSet(notLegos.motors.shark, notLegos.motorState.min)
     notLegos.motorSet(notLegos.motors.ghost, notLegos.motorState.min)
@@ -120,7 +130,9 @@ pushPrint2 = ""
 let isReady = true
 let iTook = input.runningTimeMicros()
 loops.everyInterval(500, function () {
-    notLegos.updateVolumeGlobal()
+    if (isCastleSay) {
+        notLegos.updateVolumeGlobal()
+    }
 })
 loops.everyInterval(40, function () {
     iBegan = input.runningTime()
@@ -136,6 +148,18 @@ loops.everyInterval(40, function () {
             printSay()
         } else {
             notLegos.castleDoTick()
+            buttonRow = pins.analogReadPin(AnalogReadWritePin.P1)
+            if (buttonRow < 10) {
+                buttonPress("A")
+            } else if (buttonRow < 60) {
+                buttonPress("B")
+            } else if (buttonRow < 110) {
+                buttonPress("C")
+            } else if (buttonRow < 200) {
+                buttonPress("D")
+            } else if (buttonRow < 700) {
+                buttonPress("E")
+            }
         }
     }
     iTook = input.runningTime() - iBegan
