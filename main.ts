@@ -113,6 +113,8 @@ if (isCastleSay) {
     pins.digitalWritePin(DigitalPin.P12, 1)
     pins.digitalWritePin(DigitalPin.P13, 1)
     buttonRow = 0
+    notLegos.motorSet(notLegos.motors.wheel, notLegos.motorState.max)
+    basic.pause(2000)
     notLegos.motorSet(notLegos.motors.redrack, notLegos.motorState.min)
     notLegos.motorSet(notLegos.motors.shark, notLegos.motorState.min)
     notLegos.motorSet(notLegos.motors.ghost, notLegos.motorState.min)

@@ -880,11 +880,45 @@ namespace notLegos {
 
 /// END SOUND BANK ///
 
-/// BEGIN KONG MOTORS ///
+/// BEGIN MOTOR & RELAY ///
     const kong_address = 0x10
     export enum MotorList { M1=1, M2=2 }
     export enum motors{ redrack=16, shark=4, ghost=5, cannon=8, oarrack=7, shell=6, door=3, dragon=9, wheel=1, fan=2 }
     export enum motorState { min, max, mid }
+    export enum fogLevels { none = 0, light = 1, medium = 2, heavy = 3 }
+    export enum sockState { dancing = 1, still = 0 }
+    let motor_wheel_max = 12; let motor_wheel_min = 0
+    let servo_redrack_max = 150; let servo_redrack_min = 100
+    let servo_cannon_min = 135; let servo_cannon_max = 65
+    let servo_shark_min = 20; let servo_shark_max = 85
+    let servo_oarrack_min = 65; let servo_oarrack_max = 90
+    let servo_ghost_min = 110; let servo_ghost_max = 40
+    let servo_shell_min = 170; let servo_shell_max = 100
+    let servo_door_min = 50; let servo_door_max = 140
+    let motor_fan_min = 0; let motor_fan_mid = 12; let motor_fan_max = 15
+    let servo_dragon_min = 90; let servo_dragon_max = 79
+
+    export function servoSet(servo: motors, angle: number): void {
+        let buf = pins.createBuffer(4);
+        buf[0] = servo;
+        buf[1] = angle;
+        buf[2] = 0;
+        buf[3] = 0;
+        pins.i2cWriteBuffer(kong_address, buf);
+    }
+
+    export function motorSpeed(motor: MotorList, speed: number): void {
+        let buf = pins.createBuffer(4);
+        buf[0] = motor
+        buf[1] = 1;
+        if (speed < 0) {
+            buf[1] = 2;
+            speed = speed * -1
+        }
+        buf[2] = speed;
+        buf[3] = 0;
+        pins.i2cWriteBuffer(kong_address, buf);
+    }
 
     //% blockId=NL_MOTOR_Set 
     //% block="Set %motor to %state"
@@ -924,85 +958,6 @@ namespace notLegos {
         }
     }
 
-    export function servoSet(servo: motors, angle: number): void {
-        let buf = pins.createBuffer(4);
-        buf[0] = servo;
-        buf[1] = angle;
-        buf[2] = 0;
-        buf[3] = 0;
-        pins.i2cWriteBuffer(kong_address, buf);
-    }
-
-    let motor_wheel_max = 12; let motor_wheel_min = 0
-    let servo_redrack_max = 150; let servo_redrack_min = 100
-    let servo_cannon_min = 135; let servo_cannon_max = 65
-    let servo_shark_min = 20; let servo_shark_max = 85
-    let servo_oarrack_min = 65; let servo_oarrack_max = 90
-    let servo_ghost_min = 110; let servo_ghost_max = 40
-    let servo_shell_min = 170; let servo_shell_max = 100
-    let servo_door_min = 50; let servo_door_max = 140
-    let motor_fan_min = 0; let motor_fan_mid = 12; let motor_fan_max = 15
-    let servo_dragon_min = 90; let servo_dragon_max = 79
-
-
-    export function motorSpeed(motor: MotorList, speed: number): void {
-        let buf = pins.createBuffer(4);
-        buf[0]=motor
-        buf[1] = 1;
-        if (speed < 0) {
-            buf[1] = 2;
-            speed = speed * -1
-        }
-        buf[2] = speed;
-        buf[3] = 0;
-        pins.i2cWriteBuffer(kong_address, buf);
-    }
-
-
-
-    //% blockId=kongSetMotorSpeed block="Set motor %motor speed to %speed"
-    //% subcategory="Motor" group="Motor"
-    //% speed.min=-100 speed.max=100
-    export function ksetMotorSpeed(motor: MotorList, speed: number): void {
-        let buf = pins.createBuffer(4);
-        switch (motor) {
-            case MotorList.M1:
-                buf[0] = 0x01;
-                buf[1] = 0x01;
-                if (speed < 0) {
-                    buf[1] = 0x02;
-                    speed = speed * -1
-                }
-                buf[2] = speed;
-                buf[3] = 0;
-                pins.i2cWriteBuffer(kong_address, buf);
-                break;
-            case MotorList.M2:
-                buf[0] = 0x02;
-                buf[1] = 0x01;
-                if (speed < 0) {
-                    buf[1] = 0x02;
-                    speed = speed * -1
-                }
-                buf[2] = speed;
-                buf[3] = 0;
-                pins.i2cWriteBuffer(kong_address, buf);
-                break;
-            default:
-                break;
-        }
-    }
-
-
-
-/// END KONG MOTORS ///
-
-
-/// BEGIN RELAYS ///
-
-    export enum fogLevels { none = 0, light = 1, medium = 2, heavy = 3 }
-    export enum sockState { dancing = 1, still = 0 }
-
     //% blockId=NL_RELAY_FogSet 
     //% block="set fog level to %level"
     //% subcategory="Motor" group="Motor"
@@ -1034,9 +989,6 @@ namespace notLegos {
         else{ pins.digitalWritePin(DigitalPin.P12, 1) }
     }
 
-/// END RELAYS ///
-
-
-
+/// END MOTOR & RELAY ///
 
 }
