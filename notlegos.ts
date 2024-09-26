@@ -124,7 +124,7 @@ namespace notLegos {
         vfx_indicate_hue[28] = hues.red
         vfx_indicate_hue[29] = hues.red
 
-        setEffect(vfxRegion.CastleSayAll, vfxEffect.indicate)
+        setEffect(vfxRegion.CastleSayAll, vfxEffect.parade)
     }
 
     //% blockId=NL_PIXEL_CastleDo
@@ -451,6 +451,10 @@ namespace notLegos {
                 vfx_master_hue[index] = vfx_mine_hue[index]
                 vfx_master_sat[index] = vfx_mine_sat[index]
                 vfx_master_lum[index] = Math.max(0, Math.min(50, vfx_mine_lum[index]))
+            } else if (thisEffect == vfxEffect.off) {
+                vfx_master_hue[index] = vfx_mine_hue[index]
+                vfx_master_sat[index] = vfx_mine_sat[index]
+                vfx_master_lum[index] = 0
             }
         }
     }
