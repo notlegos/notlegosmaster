@@ -210,6 +210,56 @@ namespace notLegos {
         NeoKong = create(kongPin, 4)
         vfx_light_count = 20 + 8 + 4
         vfxInit()
+        vfx_indicate_hue[0]=hues.cyan   //spot h
+        vfx_indicate_hue[1]=hues.cyan   //spot h
+        vfx_indicate_hue[2] = hues.pink //spot f
+        vfx_indicate_hue[3] = hues.pink //spot f
+        vfx_indicate_hue[26] = hues.pink   //shell brick
+        vfx_indicate_hue[4] = hues.orange   //spot d
+        vfx_indicate_hue[5] = hues.orange   //spot d
+        vfx_indicate_hue[21] = hues.orange   //cannon brick
+        vfx_indicate_hue[25] = hues.orange   //bomb brick
+        vfx_indicate_hue[6] = hues.yellow   //spot b
+        vfx_indicate_hue[7] = hues.yellow   //spot b
+        vfx_indicate_hue[8] = hues.red  //spot a
+        vfx_indicate_hue[9] = hues.red  //spot a
+        vfx_indicate_hue[10] = hues.red  //spot a
+        vfx_indicate_hue[11] = hues.red  //spot a
+        vfx_indicate_hue[20] = hues.red  //wheel brick
+        vfx_indicate_hue[27] = hues.red  //wheel brick
+        vfx_indicate_hue[12] = hues.blue    //spot c
+        vfx_indicate_hue[13] = hues.blue    //spot c
+        vfx_indicate_hue[14] = hues.cyan    //spot e
+        vfx_indicate_hue[15] = hues.cyan    //spot e
+        vfx_indicate_hue[16] = hues.purple  //spot g
+        vfx_indicate_hue[17] = hues.purple  //spot g
+        vfx_indicate_hue[24] = hues.purple  //ghost brick
+        vfx_indicate_hue[18] = hues.green   //spot i
+        vfx_indicate_hue[19] = hues.green   //spot i
+        vfx_indicate_hue[28] = hues.green   //kong
+        vfx_indicate_hue[29] = hues.green   //kong
+        vfx_indicate_hue[30] = hues.green   //kong
+        vfx_indicate_hue[31] = hues.green   //kong
+        vfx_indicate_hue[22] = hues.yellow  //dragon brick
+        vfx_indicate_hue[23] = hues.yellow  //dragon brick
+        vfx_indicate_tog[0] = 1 //spot h
+        vfx_indicate_tog[1] = 1 //spot h
+        vfx_indicate_tog[2] = 1 //spot f
+        vfx_indicate_tog[3] = 1 //spot f
+        vfx_indicate_tog[4] = 1 //spot d
+        vfx_indicate_tog[5] = 1 //spot d
+        vfx_indicate_tog[6] = 1 //spot b
+        vfx_indicate_tog[7] = 1 //spot b
+        vfx_indicate_tog[8] = 1 //spot a
+        vfx_indicate_tog[9] = 1 //spot a
+        vfx_indicate_tog[22] = 1    //wheel brick
+        vfx_indicate_tog[27] = 1    //wheel brick
+        vfx_indicate_tog[21] = 1    //cannon brick
+        vfx_indicate_tog[25] = 1    //bomb brick
+        vfx_indicate_tog[26] = 1    //shell brick
+        vfx_indicate_tog[31] = 1    //kong
+        vfx_indicate_tog[30] = 1    //kong
+        
         setEffect(vfxRegion.CastleDoAll, vfxEffect.indicate)
     }
 
@@ -219,13 +269,12 @@ namespace notLegos {
         for (let index = 0; index < vfx_light_count; index++) {
             if (index % 2 == 0){
                 vfx_idle_tog[index] = 0
-            } else{
-
             }
-            if(index)
-            vfx_indicate_lum.push(50)
+             
             vfx_indicate_tog.push(0)
-
+            vfx_indicate_lum.push(50)
+            vfx_indicate_hue.push(50)
+            vfx_indicate_sat.push(100)
 
             vfx_mine_tog.push(0)
             vfx_mine_hue.push(50)
@@ -236,9 +285,6 @@ namespace notLegos {
             vfx_fire_sat.push(100)
             vfx_fire_lum.push(randint(30, 80))
            
-            vfx_indicate_hue.push(50)
-            vfx_indicate_sat.push(100)
-            
             vfx_idle_tog.push(0)
             vfx_idle_hue.push(50)
             vfx_idle_sat.push(100)
@@ -261,6 +307,7 @@ namespace notLegos {
             vfx_master_lum.push(50)
             vfx_master_effect.push(vfxEffect.parade)
         }
+
     }
 
     export enum hues{
@@ -284,6 +331,7 @@ namespace notLegos {
         fireTick()
         glowTick()
         castleSayWrite()
+        indicateTick()
     }
 
 
@@ -296,6 +344,7 @@ namespace notLegos {
         fireTick()
         glowTick()
         castleDoWrite()
+        indicateTick()
     }
 
     function paradeTick(): void{
@@ -324,6 +373,29 @@ namespace notLegos {
             }
         }
     }
+
+    function indicateTick(): void {
+        for (let index = 0; index < vfx_light_count; index++) {
+            let thisLum = vfx_indicate_lum[index]
+            let thisHue = vfx_indicate_hue[index]
+            let thisTog = vfx_indicate_tog[index]
+            let nextHue = thisHue
+            if (thisTog == 0) {
+                if (thisLum < 80) {
+                    vfx_indicate_lum[index] = thisLum + 12
+                } else if (thisLum >= 80) {
+                    vfx_indicate_tog[index] = 1
+                }
+            } else if (thisTog == 1) {
+                if (thisLum > 25) {
+                    vfx_indicate_lum[index] = thisLum - 4
+                } else if (thisLum <= 25) {
+                    vfx_indicate_tog[index] = 0
+                }
+            }
+        }
+    }
+
 
     function fireTick(): void {
         for (let index = 0; index < vfx_light_count; index++) {
@@ -388,7 +460,7 @@ namespace notLegos {
             } else if (thisEffect == vfxEffect.indicate) {
                 vfx_master_hue[index] = vfx_indicate_hue[index]
                 vfx_master_sat[index] = vfx_indicate_sat[index]
-                vfx_master_lum[index] = vfx_indicate_lum[index]
+                vfx_master_lum[index] = Math.max(0, Math.min(50, vfx_indicate_lum[index]))
             } else if (thisEffect == vfxEffect.idle) {
                 vfx_master_hue[index] = vfx_idle_hue[index]
                 vfx_master_sat[index] = vfx_idle_sat[index]
