@@ -126,13 +126,9 @@ if (isCastleSay) {
     notLegos.motorSet(notLegos.motors.fan, notLegos.motorState.min)
     notLegos.castleDoLights(DigitalPin.P14, DigitalPin.P15, DigitalPin.P16)
 }
-let pushPrint1 = ""
-let pushPrint2 = ""
-let pushPrint3 = ""
-let pushPrint4 = ""
-let isReady = true
 let iTook = input.runningTimeMicros()
 pushPrintArray = " . . . . . . . ".split(".")
+let isReady = true
 loops.everyInterval(500, function () {
     if (isCastleSay) {
         notLegos.updateVolumeGlobal()
