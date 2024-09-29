@@ -1,7 +1,7 @@
 function pushPrint (lineNo: number, textLine: string) {
     if (textLine != pushPrintArray[lineNo]) {
         pushPrintArray[lineNo] = textLine
-        Connected.showUserText(lineNo, textLine)
+        notLegos.writeLine(lineNo, textLine)
     }
 }
 function isNearly (reference: number, reading: number, tolerance: number) {
@@ -35,20 +35,28 @@ radio.onReceivedValue(function (name, value) {
     if (name.substr(0, btToken.length) == btToken) {
         theName = name.substr(btToken.length, name.length - btToken.length)
         if (isCastleSay) {
-            if (theName == "ready") {
-                notLegos.setEffect(notLegos.vfxRegion.CastleSayAll, notLegos.vfxEffect.parade)
-                notLegos.vfxReset(notLegos.vfxEffect.parade)
-                notLegos.mp3musicPlay(notLegos.musicGenre.awaiting)
-                Connected.showUserText(7, "bt: " + theName + "=" + value)
+            if (theName == "wstar") {
+                castleMode = "wait_start"
+            } else if (theName == "") {
+            	
+            } else if (theName == "check") {
+                notLegos.setEffect(notLegos.vfxRegion.CastleSayAll, notLegos.vfxEffect.off)
+                radio.sendValue("" + btToken + "ready", 1)
+            } else {
+            	
             }
+            notLegos.writeLine(5, "bt: " + theName + "=" + value)
         } else {
             if (theName == "ready") {
-                radio.sendValue("" + btToken + "ready", 1)
-                basic.pause(560)
-                notLegos.vfxReset(notLegos.vfxEffect.parade)
-                notLegos.setEffect(notLegos.vfxRegion.CastleDoAll, notLegos.vfxEffect.parade)
-                Connected.showUserText(7, "bt: " + theName + "=" + value)
+                radio.sendValue("" + btToken + "wstar", 1)
+                notLegos.setEffect(notLegos.vfxRegion.KongFront, notLegos.vfxEffect.parade)
+            } else if (theName == "boot") {
+                notLegos.vfxReset(notLegos.vfxEffect.glow)
+                notLegos.setEffect(notLegos.vfxRegion.CastleDoAll, notLegos.vfxEffect.glow)
+            } else {
+            	
             }
+            notLegos.writeLine(5, "bt: " + theName + "=" + value)
         }
     }
 })
@@ -57,7 +65,7 @@ input.onLogoEvent(TouchButtonEvent.Touched, function () {
         notLegos.mp3musicPlay(notLegos.musicGenre.awaiting)
     }
 })
-let iBegan = 0
+let iTook = 0
 let theName = ""
 let textIn = ""
 let pushPrintArray: string[] = []
@@ -83,7 +91,8 @@ if (notLegos.SonarFirstRead(DigitalPin.P8, DigitalPin.P9) > 0) {
     isCastleSay = true
 }
 radio.setGroup(171)
-Connected.showUserText(8, "SAY: " + convertToText(isCastleSay))
+notLegos.oledinit()
+notLegos.printLine("SAY: " + convertToText(isCastleSay), 7)
 if (isCastleSay) {
     pins.digitalWritePin(DigitalPin.P5, 1)
     notLegos.potSet(AnalogPin.P10)
@@ -105,8 +114,7 @@ if (isCastleSay) {
     basic.pause(20)
     notLegos.updateVolumeGlobal()
     notLegos.castleSayLights(DigitalPin.P11, DigitalPin.P12, DigitalPin.P13)
-    radio.sendValue("" + btToken + "ready", 0)
-    castleMode = "wait_start"
+    castleMode = "init"
 } else {
     pins.digitalWritePin(DigitalPin.P2, 1)
     pins.digitalWritePin(DigitalPin.P8, 1)
@@ -125,8 +133,9 @@ if (isCastleSay) {
     notLegos.motorSet(notLegos.motors.wheel, notLegos.motorState.min)
     notLegos.motorSet(notLegos.motors.fan, notLegos.motorState.min)
     notLegos.castleDoLights(DigitalPin.P14, DigitalPin.P15, DigitalPin.P16)
+    radio.sendValue("" + btToken + "check", 1)
 }
-let iTook = input.runningTimeMicros()
+let iBegan = input.runningTimeMicros()
 pushPrintArray = " . . . . . . . ".split(".")
 let isReady = true
 loops.everyInterval(500, function () {
@@ -135,7 +144,7 @@ loops.everyInterval(500, function () {
     }
 })
 loops.everyInterval(2000, function () {
-    Connected.showUserNumber(5, iTook)
+    notLegos.writeLine(6, "" + iTook + "")
 })
 loops.everyInterval(40, function () {
     iBegan = input.runningTime()
@@ -143,18 +152,32 @@ loops.everyInterval(40, function () {
         if (isCastleSay) {
             notLegos.castleSayTick()
             if (castleMode == "wait_start") {
-                lastHunt = pins.digitalReadPin(DigitalPin.P4)
+                if (lastHunt == 1 && pins.digitalReadPin(DigitalPin.P4) == 1) {
+                    castleMode = "idle"
+                    radio.sendValue("" + btToken + "boot", 1)
+                    notLegos.vfxReset(notLegos.vfxEffect.glow)
+                    notLegos.setEffect(notLegos.vfxRegion.CastleSayAll, notLegos.vfxEffect.glow)
+                    notLegos.printLine("said:" + "boot", 5)
+                }
             } else if (castleMode == "wait_reg") {
-                lastGesture = Connected.getGesture()
-                lastHue = Connected.readColor()
+            	
             } else if (castleMode == "wait_play") {
-                lastSonarRead = notLegos.SonarNextRead()
+            	
             } else if (castleMode == "wait_laser") {
-                lastLaserR = Math.round(pins.analogReadPin(AnalogReadWritePin.P1) / 80)
-                lastLaserC = Math.round(pins.analogReadPin(AnalogReadWritePin.P2) / 80)
-                lastLaserL = Math.round(pins.analogReadPin(AnalogReadWritePin.P3) / 80)
+            	
+            } else if (castleMode == "init") {
+                radio.sendValue("" + btToken + "ready", 1)
             }
-            printSay()
+            lastHunt = pins.digitalReadPin(DigitalPin.P4)
+            lastGesture = Connected.getGesture()
+            lastHue = Connected.readColor()
+            lastSonarRead = notLegos.SonarNextRead()
+            lastLaserR = Math.round(pins.analogReadPin(AnalogReadWritePin.P1) / 80)
+            lastLaserC = Math.round(pins.analogReadPin(AnalogReadWritePin.P2) / 80)
+            lastLaserL = Math.round(pins.analogReadPin(AnalogReadWritePin.P3) / 80)
+            notLegos.printLine("R" + Math.constrain(lastLaserR, 0, 9) + " C" + Math.constrain(lastLaserC, 0, 9) + " L" + Math.constrain(lastLaserL, 0, 9), 1)
+            notLegos.printLine("S" + lastSonarRead + " H" + Math.round(lastHue) + " G" + lastGesture + " N" + lastHunt, 2)
+            notLegos.changeThree()
         } else {
             notLegos.castleDoTick()
             toggleButton = pins.analogReadPin(AnalogReadWritePin.P0) <= 30
