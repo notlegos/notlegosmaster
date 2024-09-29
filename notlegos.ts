@@ -884,7 +884,7 @@ namespace notLegos {
     const kong_address = 0x10
     export enum MotorList { M1=1, M2=2 }
     export enum motors{ redrack=16, shark=4, ghost=5, cannon=8, oarrack=7, shell=6, door=3, dragon=9, wheel=1, fan=2 }
-    export enum motorState { min, max, mid }
+    export enum motorState { min, max, mid, off }
     export enum fogLevels { none = 0, light = 1, medium = 2, heavy = 3 }
     export enum sockState { dancing = 1, still = 0 }
     let motor_wheel_max = 12; let motor_wheel_min = 0
@@ -951,10 +951,12 @@ namespace notLegos {
         } if (motor == motors.wheel) {
             if (state == motorState.min) { motorSpeed(MotorList.M1, motor_wheel_min) }
             else if (state == motorState.max) { motorSpeed(MotorList.M1, motor_wheel_max) }
+            else if (state == motorState.off) { motorSpeed(MotorList.M1, 0) }
         } if (motor == motors.fan) {
             if (state == motorState.min) { motorSpeed(MotorList.M2, motor_fan_min) }
             else if (state == motorState.mid) { motorSpeed(MotorList.M2, motor_fan_mid) }
             else if (state == motorState.max) { motorSpeed(MotorList.M2, motor_fan_max) }
+            else if (state == motorState.off) { motorSpeed(MotorList.M2, 0) }
         }
     }
 

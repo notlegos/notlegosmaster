@@ -13,7 +13,7 @@ function ready_oled () {
         notLegos.printLine("Mode: " + castleMode, 3)
     } else {
         notLegos.printLine("// Castle Do //", 0)
-        notLegos.printLine("M: " + castleMode + " T " + toggleButton, 1)
+        notLegos.printLine("M: " + castleMode + " T " + fogToggle, 1)
     }
 }
 radio.onReceivedValue(function (name, value) {
@@ -22,21 +22,22 @@ radio.onReceivedValue(function (name, value) {
         if (isCastleSay) {
             if (theName == "wstar") {
                 castleMode = "wait_start"
-            } else if (theName == "") {
-            	
+            } else if (theName == "para") {
+                notLegos.setEffect(notLegos.vfxRegion.CastleSayAll, notLegos.vfxEffect.parade)
             } else if (theName == "check") {
                 notLegos.setEffect(notLegos.vfxRegion.CastleSayAll, notLegos.vfxEffect.off)
                 radioSay("ready", 1)
-            } else {
+            } else if (false) {
             	
             }
         } else {
             if (theName == "ready") {
                 radioSay("wstar", 1)
-                notLegos.setEffect(notLegos.vfxRegion.KongFront, notLegos.vfxEffect.parade)
+                notLegos.setEffect(notLegos.vfxRegion.KongFront, notLegos.vfxEffect.mine)
             } else if (theName == "boot") {
                 notLegos.vfxReset(notLegos.vfxEffect.glow)
                 notLegos.setEffect(notLegos.vfxRegion.CastleDoAll, notLegos.vfxEffect.glow)
+                fogFlood()
             } else {
             	
             }
@@ -49,9 +50,64 @@ input.onLogoEvent(TouchButtonEvent.Touched, function () {
         notLegos.mp3musicPlay(notLegos.musicGenre.awaiting)
     }
 })
+function fogFlood () {
+    if (fogToggle) {
+        fogLevel = 3
+        basic.pause(10000)
+        notLegos.setEffect(notLegos.vfxRegion.CastleDoAll, notLegos.vfxEffect.parade)
+        radioSay("para", 1)
+        fogLevel = 0
+        notLegos.motorSet(notLegos.motors.fan, notLegos.motorState.max)
+        notLegos.motorSet(notLegos.motors.door, notLegos.motorState.max)
+        basic.pause(1000)
+        notLegos.motorSet(notLegos.motors.fan, notLegos.motorState.mid)
+        basic.pause(6000)
+        notLegos.motorSet(notLegos.motors.fan, notLegos.motorState.min)
+        basic.pause(500)
+        notLegos.motorSet(notLegos.motors.fan, notLegos.motorState.off)
+        notLegos.motorSet(notLegos.motors.door, notLegos.motorState.min)
+        fogLevel = 1
+        notLegos.setSock(notLegos.sockState.dancing)
+        basic.pause(6000)
+        notLegos.setSock(notLegos.sockState.still)
+        basic.pause(2000)
+        notLegos.motorSet(notLegos.motors.wheel, notLegos.motorState.max)
+        basic.pause(8000)
+        notLegos.motorSet(notLegos.motors.wheel, notLegos.motorState.min)
+        basic.pause(2000)
+        notLegos.motorSet(notLegos.motors.redrack, notLegos.motorState.max)
+        basic.pause(2000)
+        notLegos.motorSet(notLegos.motors.redrack, notLegos.motorState.min)
+        basic.pause(2000)
+        notLegos.motorSet(notLegos.motors.shark, notLegos.motorState.max)
+        basic.pause(2000)
+        notLegos.motorSet(notLegos.motors.shark, notLegos.motorState.min)
+        basic.pause(2000)
+        notLegos.motorSet(notLegos.motors.ghost, notLegos.motorState.max)
+        basic.pause(2000)
+        notLegos.motorSet(notLegos.motors.ghost, notLegos.motorState.min)
+        basic.pause(2000)
+        notLegos.motorSet(notLegos.motors.cannon, notLegos.motorState.max)
+        basic.pause(2000)
+        notLegos.motorSet(notLegos.motors.cannon, notLegos.motorState.min)
+        basic.pause(2000)
+        notLegos.motorSet(notLegos.motors.oarrack, notLegos.motorState.max)
+        basic.pause(2000)
+        notLegos.motorSet(notLegos.motors.oarrack, notLegos.motorState.min)
+        basic.pause(2000)
+        notLegos.motorSet(notLegos.motors.shell, notLegos.motorState.max)
+        basic.pause(2000)
+        notLegos.motorSet(notLegos.motors.shell, notLegos.motorState.min)
+        basic.pause(2000)
+        notLegos.motorSet(notLegos.motors.dragon, notLegos.motorState.max)
+        basic.pause(2000)
+        notLegos.motorSet(notLegos.motors.dragon, notLegos.motorState.min)
+    }
+}
 let iTook = 0
 let theName = ""
-let toggleButton = false
+let fogLevel = 0
+let fogToggle = false
 let buttonRow = 0
 let castleMode = ""
 let trackNo = 0
@@ -100,7 +156,8 @@ if (isCastleSay) {
     pins.digitalWritePin(DigitalPin.P12, 1)
     pins.digitalWritePin(DigitalPin.P13, 1)
     buttonRow = 0
-    toggleButton = false
+    fogToggle = false
+    fogLevel = 0
     notLegos.motorSet(notLegos.motors.redrack, notLegos.motorState.min)
     notLegos.motorSet(notLegos.motors.shark, notLegos.motorState.min)
     notLegos.motorSet(notLegos.motors.ghost, notLegos.motorState.min)
@@ -119,6 +176,18 @@ let isReady = true
 loops.everyInterval(500, function () {
     if (isCastleSay) {
         notLegos.updateVolumeGlobal()
+    } else {
+        if (fogToggle && fogLevel != 0) {
+            if (fogLevel == 1) {
+                notLegos.setFog(notLegos.fogLevels.light)
+            } else if (fogLevel == 2) {
+                notLegos.setFog(notLegos.fogLevels.medium)
+            } else if (fogLevel == 3) {
+                notLegos.setFog(notLegos.fogLevels.heavy)
+            }
+        } else {
+            notLegos.setFog(notLegos.fogLevels.none)
+        }
     }
 })
 loops.everyInterval(2000, function () {
@@ -154,22 +223,38 @@ loops.everyInterval(40, function () {
             }
         } else {
             notLegos.castleDoTick()
-            toggleButton = pins.analogReadPin(AnalogReadWritePin.P0) <= 40
+            fogToggle = pins.analogReadPin(AnalogReadWritePin.P0) <= 90
             buttonRow = pins.analogReadPin(AnalogReadWritePin.P1)
             if (buttonRow < 10) {
                 buttonPress("A")
+                notLegos.setEffect(notLegos.vfxRegion.CastleDoAll, notLegos.vfxEffect.parade)
             } else if (buttonRow < 60) {
                 buttonPress("B")
+                notLegos.setEffect(notLegos.vfxRegion.CastleDoAll, notLegos.vfxEffect.fire)
             } else if (buttonRow < 110) {
                 buttonPress("C")
+                notLegos.setEffect(notLegos.vfxRegion.CastleDoAll, notLegos.vfxEffect.mine)
             } else if (buttonRow < 200) {
                 buttonPress("D")
+                notLegos.setEffect(notLegos.vfxRegion.CastleDoAll, notLegos.vfxEffect.glow)
             } else if (buttonRow < 700) {
                 buttonPress("E")
+                notLegos.setEffect(notLegos.vfxRegion.CastleDoAll, notLegos.vfxEffect.off)
             }
         }
     }
     ready_oled()
     notLegos.changeThree()
     iTook = input.runningTime() - iBegan
+})
+loops.everyInterval(7000, function () {
+    if (!(isCastleSay) && (fogLevel == 1 && fogToggle)) {
+        notLegos.motorSet(notLegos.motors.fan, notLegos.motorState.max)
+        basic.pause(600)
+        notLegos.motorSet(notLegos.motors.fan, notLegos.motorState.mid)
+        basic.pause(500)
+        notLegos.motorSet(notLegos.motors.fan, notLegos.motorState.min)
+        basic.pause(500)
+        notLegos.motorSet(notLegos.motors.fan, notLegos.motorState.off)
+    }
 })
