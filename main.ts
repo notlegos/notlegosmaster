@@ -47,7 +47,7 @@ radio.onReceivedValue(function (name, value) {
 })
 input.onLogoEvent(TouchButtonEvent.Touched, function () {
     if (isCastleSay) {
-        notLegos.mp3musicPlay(notLegos.musicGenre.awaiting)
+        notLegos.mp3sayPlay(notLegos.playerSaying.ready)
     }
 })
 function fogFlood () {
@@ -211,6 +211,7 @@ loops.everyInterval(40, function () {
                     radioSay("boot", 1)
                     notLegos.vfxReset(notLegos.vfxEffect.glow)
                     notLegos.setEffect(notLegos.vfxRegion.CastleSayAll, notLegos.vfxEffect.glow)
+                    notLegos.mp3musicPlay(notLegos.musicGenre.lost)
                 }
             } else if (castleMode == "wait_reg") {
             	

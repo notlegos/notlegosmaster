@@ -712,35 +712,6 @@ namespace notLegos {
         mp3_sendDataFast()
     }
 
-
-    //% blockId=NL_MP3_PlayerSay
-    //% subcategory="MP3" group="MP3"
-    //% block="Say %saying as player"
-    export function mp3sayPlay(saying: playerSaying): void {
-
-    }
-
-    //% blockId=NL_MP3_VoicePlay
-    //% subcategory="MP3" group="MP3"
-    //% block="Say %voice as voice"
-    export function mp3voicePlay(voice: voiceSaying): void {
-
-    }
-
-    //% blockId=NL_MP3_MagicianSay
-    //% subcategory="MP3" group="MP3"
-    //% block="Magician says on the %side difficulty %difficulty"
-    export function mp3magician(side: magicianSaysSide, difficulty: magicianDifficulty): void {
-
-    }
-
-    //% blockId=NL_MP3_SfxPlay
-    //% subcategory="MP3" group="MP3"
-    //% block="Play %sfx sound effect"
-    export function mp3sfxPlay(sfx: sfxType): void {
-
-    }
-
     //% blockId=NL_MP3_UpdateVolume
     //% subcategory="MP3" group="MP3"
     //% block="Update volume for all"
@@ -821,10 +792,79 @@ namespace notLegos {
     export enum spotName { A, B, C, D, E, F, G, H, I }
     export enum playerChar { mario, luigi, peach, daisy, toad, wario }
 
-    let TutorialBank = feedBank("1.1.47|1.2.52|1.3.52|1.4.59|1.5.60|1.6.60|1.7.60|1.8.60|1.9.60|1.10.60|1.11.60|1.12.60|1.13.60|1.14.60|1.15.60|1.16.60|1.17.60|1.18.60|1.19.60|1.20.60|1.21.60")
-    let AwaitingBank = feedBank("2.1.64|2.2.120|2.3.120|2.4.120|2.5.120|2.6.113|2.7.120|2.8.103|2.9.120|2.10.120|2.11.120|2.12.120|2.13.118|2.14.1202.15.120")
-    let TutorialPlaylist = makePlaylist(TutorialBank)
-    let AwaitingPlaylist = makePlaylist(AwaitingBank)
+    let sb_music_tutorial = feedBank("1.1.46|1.2.51|1.3.51|1.4.59|1.5.60|1.6.60|1.7.60|1.8.60|1.9.60|1.10.60|1.11.60|1.12.60|1.13.60|1.14.60|1.15.60|1.16.60|1.17.60|1.18.60|1.19.60|1.20.60|1.21.60")
+    let sb_music_awaiting = feedBank("2.1.64|2.2.120|2.3.120|2.4.120|2.5.120|2.6.114|2.7.120|2.8.103|2.9.120|2.10.120|2.11.120|2.12.120|2.13.119|2.14.120|2.15.120|2.16.103|2.17.119|2.18.120|2.19.86|2.20.120")
+    let sb_music_level = feedBank("3.1.120|3.2.120|3.3.120|3.4.120|3.5.120|3.6.120|3.7.120|3.8.120|3.9.120|3.10.92|3.11.120|3.12.120|3.13.111|3.14.116|3.15.98|3.16.120|3.17.120|3.18.82|3.19.120|3.20.120|3.21.120|3.22.120|3.23.120|3.24.120|3.25.120|3.26.120|3.27.91|3.28.120|3.29.120|3.30.41|3.31.120|3.32.120|3.33.120|3.34.94|3.35.120|3.36.120|3.37.120|3.38.120|3.39.120|3.40.120|3.41.78|3.42.120|3.43.120|3.44.120|3.45.120|3.46.120|3.47.120|3.48.120|3.49.120|3.50.120|3.51.120|3.52.113|3.53.120|3.54.120|3.55.42|3.56.120|3.57.120|3.58.120|3.59.114|3.60.120|3.61.120|3.62.118|3.63.120|3.64.120|3.65.120|3.66.120|3.67.120|3.68.59|3.69.120|3.70.120|3.71.118|3.72.120|3.73.120|3.74.70|3.75.120|3.76.120|3.77.120|3.78.120|3.79.120|3.80.120|3.81.120|3.82.120|3.83.80|3.84.120|3.85.120|3.86.120|3.87.120|3.88.107|3.89.120|3.90.120|3.91.120|3.92.120|3.93.36|3.94.120|3.95.120|3.96.120|3.97.120|3.98.120|3.99.120|3.100.63|3.101.120|3.102.120|3.103.112|3.104.105|3.105.120|3.106.110|3.107.120|3.108.120|3.109.120|3.110.120|3.111.120|3.112.120|3.113.120|3.114.120|3.115.120|3.116.119|3.117.120|3.118.120|3.119.120|3.120.120|3.121.120|3.122.120|3.123.120|3.124.120|3.125.120|3.126.104|3.127.120|3.128.87|3.129.120|3.130.118|3.131.120|3.132.120|3.133.50|3.134.109|3.135.120|3.136.120|3.137.120|3.138.91|3.139.120|3.140.120|3.141.120|3.142.120|3.143.120|3.144.120|3.145.104|3.146.112|3.147.120")
+    let sb_music_won = feedBank("4.1.30|4.2.22|4.3.30|4.4.17|4.5.29|4.6.30|4.7.30|4.8.30|4.9.30|4.10.30|4.11.20|4.12.28|4.13.30|4.14.15|4.15.30|4.16.17|4.17.17|4.18.15|4.19.30|4.20.30|4.21.30|4.22.17|4.23.30|4.24.30|4.25.30")
+    let sb_music_lost = feedBank("5.1.30|5.2.30|5.3.30|5.4.30|5.5.30|5.6.30|5.7.30|5.8.30|5.9.30|5.10.30|5.11.30")
+    let sb_sfx_correct = feedBank("6.1.5|6.2.8|6.3.6|6.4.7|6.5.6|6.6.14|6.7.7|6.8.8|6.9.12|6.10.7|6.11.9|6.12.7|6.13.10|6.14.8|6.15.8|6.16.4|6.17.7|6.18.4|6.19.2|6.20.10|6.21.7|6.22.7|6.23.6|6.24.4|6.25.7|6.26.12|6.27.4|6.28.6|6.29.6|6.30.6|6.31.4|6.32.5|6.33.3|6.34.6|6.35.6|6.36.6|6.37.6|6.38.4|6.39.8|6.40.6|6.41.3|6.42.3|6.43.7|6.44.8|6.45.6|6.46.2|6.47.5|6.48.7|6.49.8|6.50.7|6.51.6|6.52.7|6.53.6|6.54.8|6.55.5|6.56.5|6.57.7|6.58.6|6.59.8|6.60.5|6.61.6|6.62.8|6.63.3|6.64.3|6.65.6|6.66.3|6.67.6|6.68.2|6.69.3|6.70.3|6.71.2|6.72.3|6.73.6|6.74.7|6.75.5|6.76.3|6.77.5|6.78.3|6.79.2|6.80.3|6.81.3|6.82.1|6.83.1|6.84.1|6.85.1|6.86.1|6.87.1|6.88.3|6.89.1|6.90.1|6.91.4|6.92.4")
+    let sb_sfx_incorrect = feedBank("7.1.6|7.2.5|7.3.3|7.4.5|7.5.7|7.6.6|7.7.4|7.8.1|7.9.3|7.10.4|7.11.3|7.12.3|7.13.6|7.14.3|7.15.1|7.16.1|7.17.1|7.18.1|7.19.5|7.20.4|7.21.3|7.22.7")
+    let sb_sfx_beep = feedBank("8.1.1|8.2.2|8.3.1")
+    let sb_sfx_smash = feedBank("8.4.1|8.5.1|8.6.1|8.7.3")
+    let sb_sfx_falling = feedBank("8.8.6")
+    let sb_sfx_boom = feedBank("8.9.1|8.10.2|8.11.3|8.12.2")
+    let sb_sfx_cannon = feedBank("8.13.2|8.14.1|8.15.1|8.16.2|8.17.2")
+    let sb_sfx_fire = feedBank("8.18.2|8.19.2|8.20.5|8.21.2")
+    let sb_sfx_ghost = feedBank("8.22.5|8.23.4|8.24.5|8.25.5")
+    let sb_sfx_hit = feedBank("8.26.1|8.27.1|8.28.1|8.29.1|8.30.1")
+    let sb_sfx_slash = feedBank("8.31.1|8.32.1|8.33.1|8.34.1|8.35.1|8.36.1|8.37.1|8.38.1|8.39.1|8.40.1|8.41.1|8.42.2")
+    let sb_sfx_zap = feedBank("8.43.1|8.44.1|8.45.2|8.46.1|8.47.2|8.48.1")
+    let sb_sfx_splash = feedBank("8.49.2|8.50.2|8.51.1|8.52.1|8.53.2|8.54.1|8.55.2|8.56.1|8.57.2")
+    let sb_music_intro = feedBank("9.1.3|9.2.4|9.3.8|9.4.5|9.5.4|9.6.12|9.7.3|9.8.7|9.9.6|9.10.7|9.11.9|9.12.9|9.13.11|9.14.3|9.15.10|9.16.3|9.17.6|9.18.5|9.19.6|9.20.5|9.21.7|9.22.5|9.23.3|9.24.7|9.25.6|9.26.6|9.27.11|9.28.5|9.29.5|9.30.4|9.31.6|9.32.4|9.33.4|9.34.10|9.35.8|9.36.8|9.37.3|9.38.7|9.39.4|9.40.6|9.41.3|9.42.7|9.43.7|9.44.3|9.45.6|9.46.1|9.47.2|9.48.2|9.49.8|9.50.16|9.51.9|9.52.10|9.53.13|9.54.14|9.55.14|9.56.16|9.57.7|9.58.4|9.59.9|9.60.8|9.61.9|9.62.9|9.63.12|9.64.4|9.65.6|9.66.9|9.67.5|9.68.6|9.69.5|9.70.10|9.71.8|9.72.8|9.73.5|9.74.3")
+    let sb_sfx_voice = feedBank("10.1.4|10.2.6|10.3.4|10.4.4|10.5.6|10.6.4|10.7.11|10.8.6|10.9.4|10.10.1")
+    let sb_magician_left_easy = feedBank("11.1.3|11.2.6|11.3.7|11.4.6|11.5.6|11.6.7|11.7.6|11.8.6|11.9.6|11.10.7|11.11.6|11.12.6|11.13.7|11.14.6|11.15.6|11.16.6|11.17.6|11.18.6|11.19.6|11.20.6|11.21.6|11.22.7|11.23.6|11.24.6|11.25.6|11.26.6|11.27.7|11.28.7|11.29.7|11.30.6|11.31.6|11.32.8|11.33.7|11.34.6|11.35.7|11.36.5|11.37.6|11.38.8|11.39.6|11.40.6|11.41.6|11.42.6|11.43.6|11.44.7|11.45.6|11.46.7|11.47.7|11.48.8|11.49.6|11.50.7|11.51.6|11.52.6|11.53.7|11.54.8|11.55.7|11.56.6|11.57.7|11.58.6|11.59.6|11.60.6|11.61.6")
+    let sb_magician_left_medium = feedBank("11.62.7|11.63.6|11.64.6|11.65.8|11.66.7|11.67.8|11.68.8|11.69.8|11.70.7|11.71.7|11.72.6|11.73.6|11.74.6|11.75.6|11.76.6|11.77.7|11.78.6|11.79.7|11.80.6|11.81.6|11.82.6|11.83.7|11.84.6|11.85.6|11.86.6|11.87.7|11.88.6|11.89.6|11.90.7|11.91.6|11.92.6|11.93.6|11.94.6|11.95.6|11.96.7|11.97.6|11.98.6|11.99.7|11.100.6|11.101.6|11.102.6|11.103.7|11.104.6|11.105.8|11.106.6|11.107.6|11.108.6|11.109.7|11.110.6|11.111.7|11.112.7|11.113.6|11.114.6|11.115.7|11.116.6|11.117.7|11.118.7|11.119.6|11.120.6|11.121.6|11.122.7|11.123.7|11.124.6|11.125.6|11.126.6|11.127.8|11.128.7|11.129.6|11.130.8|11.131.7|11.132.6|11.133.7|11.134.6|11.135.6|11.136.7|11.137.7")
+    let sb_magician_left_hard = feedBank("11.219.7|11.220.6|11.221.6|11.222.6|11.223.6|11.224.6|11.225.7|11.226.7|11.227.6|11.228.6|11.229.6|11.230.8|11.231.7|11.232.7|11.233.6|11.234.6|11.235.6|11.236.8|11.237.7|11.238.7|11.239.6|11.240.6|11.241.8|11.242.7|11.243.7|11.244.6|11.245.6|11.246.7|11.247.7|11.248.7|11.249.7|11.250.6|11.251.6|11.252.6|11.253.6|11.254.6|11.255.6|11.256.6|11.257.6|11.258.7|11.259.7|11.260.7|11.261.6|11.262.6|11.263.6|11.264.6|11.265.6|11.266.6|11.267.7|11.268.6|11.269.6|11.270.6|11.271.6|11.272.6|11.273.6|11.274.6|11.275.7|11.276.6|11.277.6|11.278.7|11.279.7|11.280.7|11.281.6|11.282.6|11.283.7|11.284.9|11.285.7|11.286.6|11.287.6|11.288.6|11.289.7|11.290.7|11.291.6|11.292.6|11.293.7|11.294.7|11.295.6|11.296.7|11.297.6|11.298.6|11.299.6|11.300.6|11.301.6|11.302.6|11.303.7|11.304.6|11.305.6|11.306.7|11.307.6|")
+    let sb_magician_right_easy = feedBank("11.159.6|11.160.6|11.161.7|11.162.6|11.163.7|11.164.7|11.165.6|11.166.6|11.167.7|11.168.7|11.169.6|11.170.8|11.171.7|11.172.7|11.173.6|11.174.6|11.175.6|11.176.6|11.177.7|11.178.6|11.179.6|11.180.6|11.181.6|11.182.7|11.183.6|11.184.6|11.185.6|11.186.6|11.187.8|11.188.7|11.189.6|11.190.6|11.191.6|11.192.6|11.193.6|11.194.6|11.195.5|11.196.6|11.197.6|11.198.6|11.199.7|11.200.6|11.201.6|11.202.6|11.203.6|11.204.6|11.205.6|11.206.6|11.207.6|11.208.6|11.209.6|11.210.7|11.211.7|11.212.7|11.213.6|11.214.7|11.215.7|11.216.6|11.217.7|11.218.6")
+    let sb_magician_right_medium = feedBank("11.219.7|11.220.6|11.221.6|11.222.6|11.223.6|11.224.6|11.225.7|11.226.7|11.227.6|11.228.6|11.229.6|11.230.8|11.231.7|11.232.7|11.233.6|11.234.6|11.235.6|11.236.8|11.237.7|11.238.7|11.239.6|11.240.6|11.241.8|11.242.7|11.243.7|11.244.6|11.245.6|11.246.7|11.247.7|11.248.7|11.249.7|11.250.6|11.251.6|11.252.6|11.253.6|11.254.6|11.255.6|11.256.6|11.257.6|11.258.7|11.259.7|11.260.7|11.261.6|11.262.6|11.263.6|11.264.6|11.265.6|11.266.6|11.267.7|11.268.6|11.269.6|11.270.6|11.271.6|11.272.6|11.273.6|11.274.6|11.275.7|11.276.6|11.277.6|11.278.7|11.279.7|11.280.7|11.281.6|11.282.6|11.283.7|11.284.9|11.285.7|11.286.6|11.287.6")
+    let sb_magician_right_hard = feedBank("11.288.6|11.289.7|11.290.7|11.291.6|11.292.6|11.293.7|11.294.7|11.295.6|11.296.7|11.297.6|11.298.6|11.299.6|11.300.6|11.301.6|11.302.6|11.303.7|11.304.6|11.305.6|11.306.7|11.307.6|11.308.7|11.309.6|11.310.6|11.311.6|11.312.7|11.313.7|11.314.6|11.315.7")
+    let sb_mario_name = feedBank("12.1.2|12.2.1|12.4.2|12.5.3")
+    let sb_mario_intro = feedBank("12.3.4|12.6.2|12.7.212.112.1|12.113.1|")
+    let sb_mario_ready = feedBank("12.8.1|12.9.2|12.10.2|12.11.1|12.12.1|12.13.2|12.14.2|12.15.2|12.16.2|12.17.2|12.18.1")
+    let sb_mario_yay = feedBank("12.19.1|12.20.1|12.21.1|12.22.1|12.23.1|12.24.1|12.25.1|12.26.1|12.27.1|12.28.1|12.29.1|12.30.1|12.31.1|12.32.1|12.33.1|12.34.1|12.35.1|12.36.1|12.37.1|12.38.1|12.39.1|12.40.1|12.41.1|12.42.1|12.43.1|12.44.1|12.45.1|12.46.1|12.47.1|12.48.1|12.49.1|12.50.1|12.51.2|12.52.2|12.53.2|12.54.2|12.55.2|12.56.2|12.57.2|12.58.2|12.59.2|12.60.2|12.61.2|12.62.2")
+    let sb_mario_success = feedBank("12.63.1|12.64.2|12.65.2|12.66.2|12.67.2|12.68.3|12.69.3|12.70.3|12.71.3|12.72.3")
+    let sb_mario_won = feedBank("12.73.2|12.74.2|12.75.3|12.76.3|12.77.3")
+    let sb_mario_ouch = feedBank("12.78.1|12.79.1|12.80.1|12.81.1|12.82.1|12.83.1|12.84.1|12.85.1|12.86.1|12.87.1|12.88.1|12.89.1|12.90.1|12.91.1|12.92.1|12.93.1|12.94.1|12.95.1")
+    let sb_mario_nay = feedBank("12.96.1|12.97.1|12.98.1|12.99.1|12.100.1|12.101.1|12.102.2|12.103.1|12.104.1|12.105.1|12.106.1|12.107.1|12.108.1|12.109.1|12.110.2|12.111.2")
+    let sb_mario_failure = feedBank("12.114.2|12.115.2|12.116.2|12.117.1")
+    let sb_mario_lost = feedBank("12.118.3|12.119.3|12.120.4|12.121.1")
+    let sb_mario_hurry = feedBank("12.122.44")
+    
+    let playlist_tutorial = makePlaylist(sb_music_tutorial)
+    let playlist_awaiting = makePlaylist(sb_music_awaiting)
+    let playlist_level = makePlaylist(sb_music_level)
+    let playlist_won = makePlaylist(sb_music_won)
+    let playlist_lost = makePlaylist(sb_music_lost)
+    let playlist_correct = makePlaylist(sb_sfx_correct)
+    let playlist_incorrect = makePlaylist(sb_sfx_incorrect)
+    let playlist_intro = makePlaylist(sb_music_intro)
+    let playlist_boom = makePlaylist(sb_sfx_boom)
+    let playlist_smash = makePlaylist(sb_sfx_smash)
+    let playlist_falling = makePlaylist(sb_sfx_falling)
+    let playlist_cannon = makePlaylist(sb_sfx_cannon)
+    let playlist_fire = makePlaylist(sb_sfx_fire)
+    let playlist_ghost = makePlaylist(sb_sfx_ghost)
+    let playlist_hit = makePlaylist(sb_sfx_hit)
+    let playlist_slash = makePlaylist(sb_sfx_slash)
+    let playlist_zap = makePlaylist(sb_sfx_zap)
+    let playlist_splash = makePlaylist(sb_sfx_splash)
+    let playlist_magician_left_easy = makePlaylist(sb_magician_left_easy)
+    let playlist_magician_left_medium = makePlaylist(sb_magician_left_medium)
+    let playlist_magician_left_hard = makePlaylist(sb_magician_left_hard)
+    let playlist_magician_right_easy = makePlaylist(sb_magician_right_easy)
+    let playlist_magician_right_medium = makePlaylist(sb_magician_right_medium)
+    let playlist_magician_right_hard = makePlaylist(sb_magician_right_hard)
+    let playlist_mario_name = makePlaylist(sb_mario_name)
+    let playlist_mario_intro = makePlaylist(sb_mario_intro)
+    let playlist_mario_ready = makePlaylist(sb_mario_ready)
+    let playlist_mario_yay = makePlaylist(sb_mario_yay)
+    let playlist_mario_success = makePlaylist(sb_mario_success)
+    let playlist_mario_won = makePlaylist(sb_mario_won)
+    let playlist_mario_ouch = makePlaylist(sb_mario_ouch)
+    let playlist_mario_nay = makePlaylist(sb_mario_nay)
+    let playlist_mario_failure = makePlaylist(sb_mario_failure)
+    let playlist_mario_lost = makePlaylist(sb_mario_lost)
+    let playlist_mario_hurry = makePlaylist(sb_mario_hurry)
 
     function takeRotate(PlaylistIn: number[]) {
         let returnTrack = PlaylistIn.shift()
@@ -872,12 +912,133 @@ namespace notLegos {
     //% block="Play %genre music"
     export function mp3musicPlay(genre: musicGenre): void {
         if (genre == musicGenre.tutorial){
-            bankPlay(mp3type.music, TutorialBank, takeRotate(TutorialPlaylist))
+            bankPlay(mp3type.music, sb_music_tutorial, takeRotate(playlist_tutorial))
         } else if (genre == musicGenre.awaiting) {
-            bankPlay(mp3type.music, AwaitingBank, takeRotate(AwaitingPlaylist))
+            bankPlay(mp3type.music, sb_music_awaiting, takeRotate(playlist_awaiting))
+        } else if (genre == musicGenre.intro){
+            bankPlay(mp3type.music, sb_music_intro, takeRotate(playlist_intro))
+        } else if (genre == musicGenre.level) {
+            bankPlay(mp3type.music, sb_music_level, takeRotate(playlist_level))
+        } else if (genre == musicGenre.won) {
+            bankPlay(mp3type.music, sb_music_won, takeRotate(playlist_won))
+        } else if (genre == musicGenre.lost) {
+            bankPlay(mp3type.music, sb_music_lost, takeRotate(playlist_lost))
         }
     }
 
+    //% blockId=NL_MP3_PlayerSay
+    //% subcategory="MP3" group="MP3"
+    //% block="Say %saying as player"
+    export function mp3sayPlay(saying: playerSaying): void {
+        if(saying == playerSaying.ready){
+            bankPlay(mp3type.player, sb_mario_ready, takeRotate(playlist_mario_ready))
+        }else if (saying == playerSaying.yay){
+            bankPlay(mp3type.player, sb_mario_yay, takeRotate(playlist_mario_yay))
+        } else if (saying == playerSaying.intro) {
+            bankPlay(mp3type.player, sb_mario_intro, takeRotate(playlist_mario_intro))
+        } else if (saying == playerSaying.nay) {
+            bankPlay(mp3type.player, sb_mario_nay, takeRotate(playlist_mario_nay))
+        } else if (saying == playerSaying.ouch) {
+            bankPlay(mp3type.player, sb_mario_ouch, takeRotate(playlist_mario_ouch))
+        } else if (saying == playerSaying.success) {
+            bankPlay(mp3type.player, sb_mario_success, takeRotate(playlist_mario_success))
+        } else if (saying == playerSaying.failure) {
+            bankPlay(mp3type.player, sb_mario_failure, takeRotate(playlist_mario_failure))
+        } else if (saying == playerSaying.won) {
+            bankPlay(mp3type.player, sb_mario_won, takeRotate(playlist_mario_won))
+        } else if (saying == playerSaying.lost) {
+            bankPlay(mp3type.player, sb_mario_lost, takeRotate(playlist_mario_lost))
+        } else if (saying == playerSaying.hurry) {
+            bankPlay(mp3type.player, sb_mario_hurry, takeRotate(playlist_mario_hurry))
+        }
+    }
+
+    //% blockId=NL_MP3_VoicePlay
+    //% subcategory="MP3" group="MP3"
+    //% block="Say %voice as voice"
+    export function mp3voicePlay(voice: voiceSaying): void {
+        if (voice == voiceSaying.name) {
+
+        } else if (voice == voiceSaying.begin) {
+
+        } else if (voice == voiceSaying.retry) {
+
+        } else if (voice == voiceSaying.next) {
+
+        } else if (voice == voiceSaying.complete) {
+
+        } else if (voice == voiceSaying.gameover) {
+
+        } else if (voice == voiceSaying.welcome) {
+
+        } else if (voice == voiceSaying.intro) {
+
+        } else if (voice == voiceSaying.howto1) {
+
+        } else if (voice == voiceSaying.howto2) {
+
+        } else if (voice == voiceSaying.howto3) {
+
+        } else if (voice == voiceSaying.howto4) {
+
+        } else if (voice == voiceSaying.howto5) {
+
+        } else if (voice == voiceSaying.howto6) {
+
+        } else if (voice == voiceSaying.howto7) {
+
+        } else if (voice == voiceSaying.howto8) {
+
+        } else if (voice == voiceSaying.howto9) {
+
+        }
+    }
+
+    //% blockId=NL_MP3_MagicianSay
+    //% subcategory="MP3" group="MP3"
+    //% block="Magician says on the %side difficulty %difficulty"
+    export function mp3magician(side: magicianSaysSide, difficulty: magicianDifficulty): void {
+        if (side == magicianSaysSide.left) {
+            if (difficulty == magicianDifficulty.easy) {
+
+            } else if (difficulty = magicianDifficulty.medium) {
+
+            } else if (difficulty = magicianDifficulty.hard) {
+
+            }
+        } else if (side = magicianSaysSide.right) {
+            if (difficulty == magicianDifficulty.easy) {
+
+            } else if (difficulty = magicianDifficulty.medium) {
+
+            } else if (difficulty = magicianDifficulty.hard) {
+
+            }
+        } 
+    }
+
+    //% blockId=NL_MP3_SfxPlay
+    //% subcategory="MP3" group="MP3"
+    //% block="Play %sfx sound effect"
+    export function mp3sfxPlay(sfx: sfxType): void {
+        if(sfx == sfxType.correct){
+
+        }else if (sfx == sfxType.incorrect){
+
+        }else if (sfx == sfxType.ghost){
+
+        }else if (sfx == sfxType.fire){
+
+        }else if (sfx == sfxType.explosion){
+
+        }else if (sfx == sfxType.splash){
+
+        } else if (sfx == sfxType.spark) {
+
+        } else if (sfx == sfxType.slash) {
+
+        }
+    }
 /// END SOUND BANK ///
 
 /// BEGIN MOTOR & RELAY ///
@@ -891,7 +1052,7 @@ namespace notLegos {
     let servo_redrack_max = 150; let servo_redrack_min = 100
     let servo_cannon_min = 135; let servo_cannon_max = 65
     let servo_shark_min = 20; let servo_shark_max = 85
-    let servo_oarrack_min = 65; let servo_oarrack_max = 90
+    let servo_oarrack_min = 60; let servo_oarrack_max = 110
     let servo_ghost_min = 110; let servo_ghost_max = 40
     let servo_shell_min = 170; let servo_shell_max = 100
     let servo_door_min = 50; let servo_door_max = 140
