@@ -11,6 +11,7 @@ function ready_oled () {
         notLegos.printLine("R" + Math.constrain(lastLaserR, 0, 9) + " C" + Math.constrain(lastLaserC, 0, 9) + " L" + Math.constrain(lastLaserL, 0, 9), 1)
         notLegos.printLine("S" + lastSonarRead + " H" + Math.round(lastHue / 3) + " G" + lastGesture + " N" + lastHunt, 2)
         notLegos.printLine("Mode: " + castleMode, 3)
+        notLegos.printLine("M:" + notLegos.mp3durationMusic(), 4)
     } else {
         notLegos.printLine("// Castle Do //", 0)
         notLegos.printLine("M: " + castleMode + " T " + fogToggle, 1)
@@ -33,7 +34,7 @@ radio.onReceivedValue(function (name, value) {
         } else {
             if (theName == "ready") {
                 radioSay("wstar", 1)
-                notLegos.setEffect(notLegos.vfxRegion.KongFront, notLegos.vfxEffect.mine)
+                notLegos.setEffect(notLegos.vfxRegion.KongFront, notLegos.vfxEffect.indicate)
             } else if (theName == "boot") {
                 notLegos.vfxReset(notLegos.vfxEffect.glow)
                 notLegos.setEffect(notLegos.vfxRegion.CastleDoAll, notLegos.vfxEffect.glow)
@@ -47,7 +48,7 @@ radio.onReceivedValue(function (name, value) {
 })
 input.onLogoEvent(TouchButtonEvent.Touched, function () {
     if (isCastleSay) {
-        notLegos.mp3sayPlay(notLegos.playerSaying.ready)
+        notLegos.mp3sfxPlay(notLegos.sfxType.fire)
     }
 })
 function fogFlood () {
@@ -106,11 +107,12 @@ function fogFlood () {
 }
 let iTook = 0
 let theName = ""
+let castleMode = ""
+let digits: Connected.TM1637LEDs = null
+let isCastleSay = false
+let btToken = ""
 let fogLevel = 0
 let fogToggle = false
-let buttonRow = 0
-let castleMode = ""
-let trackNo = 0
 let lastHunt = 0
 let lastLaserC = 0
 let lastLaserL = 0
@@ -118,13 +120,20 @@ let lastLaserR = 0
 let lastHue = 0
 let lastGesture = 0
 let lastSonarRead = 0
-let digits: Connected.TM1637LEDs = null
-let isCastleSay = false
-let btToken = ""
 let lastVolumeRead = 0
+lastSonarRead = 0
+lastGesture = 0
+lastHue = 0
+lastLaserR = 0
+lastLaserL = 0
+lastLaserC = 0
+lastHunt = 0
+let buttonRow = 0
+fogToggle = false
+fogLevel = 0
+btToken = "KC$"
 pins.setAudioPinEnabled(false)
 led.enable(false)
-btToken = "KC$"
 isCastleSay = notLegos.SonarFirstRead(DigitalPin.P8, DigitalPin.P9) > 0
 radio.setGroup(171)
 notLegos.oledinit()
@@ -135,29 +144,21 @@ if (isCastleSay) {
     DigitalPin.P7,
     DigitalPin.P6
     )
-    lastSonarRead = 0
-    lastGesture = 0
-    lastHue = 0
-    lastLaserR = 0
-    lastLaserL = 0
-    lastLaserC = 0
-    lastHunt = 0
-    notLegos.mp3setPorts(notLegos.mp3type.music, SerialPin.P15)
+    notLegos.mp3setPorts(notLegos.mp3type.music, SerialPin.P14)
+    notLegos.mp3setPorts(notLegos.mp3type.sfxvoice, SerialPin.P15)
+    notLegos.mp3setPorts(notLegos.mp3type.player, SerialPin.P16)
     basic.pause(20)
-    notLegos.setVolume(notLegos.mp3type.music, 84)
-    trackNo = 1
+    notLegos.setVolume(notLegos.mp3type.music, 100)
+    notLegos.setVolume(notLegos.mp3type.player, 100)
+    notLegos.setVolume(notLegos.mp3type.sfxvoice, 100)
     basic.pause(20)
     notLegos.updateVolumeGlobal()
     notLegos.castleSayLights(DigitalPin.P11, DigitalPin.P12, DigitalPin.P13)
-    castleMode = "init"
 } else {
     pins.digitalWritePin(DigitalPin.P2, 1)
     pins.digitalWritePin(DigitalPin.P8, 1)
     pins.digitalWritePin(DigitalPin.P12, 1)
     pins.digitalWritePin(DigitalPin.P13, 1)
-    buttonRow = 0
-    fogToggle = false
-    fogLevel = 0
     notLegos.motorSet(notLegos.motors.redrack, notLegos.motorState.min)
     notLegos.motorSet(notLegos.motors.shark, notLegos.motorState.min)
     notLegos.motorSet(notLegos.motors.ghost, notLegos.motorState.min)
@@ -173,6 +174,7 @@ if (isCastleSay) {
 }
 let iBegan = input.runningTimeMicros()
 let isReady = true
+castleMode = "init"
 loops.everyInterval(500, function () {
     if (isCastleSay) {
         notLegos.updateVolumeGlobal()
@@ -206,12 +208,14 @@ loops.everyInterval(40, function () {
             lastLaserC = Math.round(pins.analogReadPin(AnalogReadWritePin.P2) / 80)
             lastLaserL = Math.round(pins.analogReadPin(AnalogReadWritePin.P3) / 80)
             if (castleMode == "wait_start") {
-                if (lastHunt == 1 && pins.digitalReadPin(DigitalPin.P4) == 1) {
+                if (lastHunt == 1) {
                     castleMode = "idle"
                     radioSay("boot", 1)
                     notLegos.vfxReset(notLegos.vfxEffect.glow)
                     notLegos.setEffect(notLegos.vfxRegion.CastleSayAll, notLegos.vfxEffect.glow)
-                    notLegos.mp3musicPlay(notLegos.musicGenre.lost)
+                    notLegos.mp3musicPlay(notLegos.musicGenre.intro)
+                    basic.pause(notLegos.mp3durationMusic() * 1000)
+                    notLegos.mp3voicePlay(notLegos.voiceSaying.welcome)
                 }
             } else if (castleMode == "wait_reg") {
             	

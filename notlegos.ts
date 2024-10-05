@@ -797,6 +797,7 @@ namespace notLegos {
     let sb_music_level = feedBank("3.1.120|3.2.120|3.3.120|3.4.120|3.5.120|3.6.120|3.7.120|3.8.120|3.9.120|3.10.92|3.11.120|3.12.120|3.13.111|3.14.116|3.15.98|3.16.120|3.17.120|3.18.82|3.19.120|3.20.120|3.21.120|3.22.120|3.23.120|3.24.120|3.25.120|3.26.120|3.27.91|3.28.120|3.29.120|3.30.41|3.31.120|3.32.120|3.33.120|3.34.94|3.35.120|3.36.120|3.37.120|3.38.120|3.39.120|3.40.120|3.41.78|3.42.120|3.43.120|3.44.120|3.45.120|3.46.120|3.47.120|3.48.120|3.49.120|3.50.120|3.51.120|3.52.113|3.53.120|3.54.120|3.55.42|3.56.120|3.57.120|3.58.120|3.59.114|3.60.120|3.61.120|3.62.118|3.63.120|3.64.120|3.65.120|3.66.120|3.67.120|3.68.59|3.69.120|3.70.120|3.71.118|3.72.120|3.73.120|3.74.70|3.75.120|3.76.120|3.77.120|3.78.120|3.79.120|3.80.120|3.81.120|3.82.120|3.83.80|3.84.120|3.85.120|3.86.120|3.87.120|3.88.107|3.89.120|3.90.120|3.91.120|3.92.120|3.93.36|3.94.120|3.95.120|3.96.120|3.97.120|3.98.120|3.99.120|3.100.63|3.101.120|3.102.120|3.103.112|3.104.105|3.105.120|3.106.110|3.107.120|3.108.120|3.109.120|3.110.120|3.111.120|3.112.120|3.113.120|3.114.120|3.115.120|3.116.119|3.117.120|3.118.120|3.119.120|3.120.120|3.121.120|3.122.120|3.123.120|3.124.120|3.125.120|3.126.104|3.127.120|3.128.87|3.129.120|3.130.118|3.131.120|3.132.120|3.133.50|3.134.109|3.135.120|3.136.120|3.137.120|3.138.91|3.139.120|3.140.120|3.141.120|3.142.120|3.143.120|3.144.120|3.145.104|3.146.112|3.147.120")
     let sb_music_won = feedBank("4.1.30|4.2.22|4.3.30|4.4.17|4.5.29|4.6.30|4.7.30|4.8.30|4.9.30|4.10.30|4.11.20|4.12.28|4.13.30|4.14.15|4.15.30|4.16.17|4.17.17|4.18.15|4.19.30|4.20.30|4.21.30|4.22.17|4.23.30|4.24.30|4.25.30")
     let sb_music_lost = feedBank("5.1.30|5.2.30|5.3.30|5.4.30|5.5.30|5.6.30|5.7.30|5.8.30|5.9.30|5.10.30|5.11.30")
+    let sb_music_intro = feedBank("9.1.3|9.2.4|9.3.8|9.4.5|9.5.4|9.6.12|9.7.3|9.8.7|9.9.6|9.10.7|9.11.9|9.12.9|9.13.11|9.14.3|9.15.10|9.16.3|9.17.6|9.18.5|9.19.6|9.20.5|9.21.7|9.22.5|9.23.3|9.24.7|9.25.6|9.26.6|9.27.11|9.28.5|9.29.5|9.30.4|9.31.6|9.32.4|9.33.4|9.34.10|9.35.8|9.36.8|9.37.3|9.38.7|9.39.4|9.40.6|9.41.3|9.42.7|9.43.7|9.44.3|9.45.6|9.46.1|9.47.2|9.48.2|9.49.8|9.50.16|9.51.9|9.52.10|9.53.13|9.54.14|9.55.14|9.56.16|9.57.7|9.58.4|9.59.9|9.60.8|9.61.9|9.62.9|9.63.12|9.64.4|9.65.6|9.66.9|9.67.5|9.68.6|9.69.5|9.70.10|9.71.8|9.72.8|9.73.5|9.74.3")
     let sb_sfx_correct = feedBank("6.1.5|6.2.8|6.3.6|6.4.7|6.5.6|6.6.14|6.7.7|6.8.8|6.9.12|6.10.7|6.11.9|6.12.7|6.13.10|6.14.8|6.15.8|6.16.4|6.17.7|6.18.4|6.19.2|6.20.10|6.21.7|6.22.7|6.23.6|6.24.4|6.25.7|6.26.12|6.27.4|6.28.6|6.29.6|6.30.6|6.31.4|6.32.5|6.33.3|6.34.6|6.35.6|6.36.6|6.37.6|6.38.4|6.39.8|6.40.6|6.41.3|6.42.3|6.43.7|6.44.8|6.45.6|6.46.2|6.47.5|6.48.7|6.49.8|6.50.7|6.51.6|6.52.7|6.53.6|6.54.8|6.55.5|6.56.5|6.57.7|6.58.6|6.59.8|6.60.5|6.61.6|6.62.8|6.63.3|6.64.3|6.65.6|6.66.3|6.67.6|6.68.2|6.69.3|6.70.3|6.71.2|6.72.3|6.73.6|6.74.7|6.75.5|6.76.3|6.77.5|6.78.3|6.79.2|6.80.3|6.81.3|6.82.1|6.83.1|6.84.1|6.85.1|6.86.1|6.87.1|6.88.3|6.89.1|6.90.1|6.91.4|6.92.4")
     let sb_sfx_incorrect = feedBank("7.1.6|7.2.5|7.3.3|7.4.5|7.5.7|7.6.6|7.7.4|7.8.1|7.9.3|7.10.4|7.11.3|7.12.3|7.13.6|7.14.3|7.15.1|7.16.1|7.17.1|7.18.1|7.19.5|7.20.4|7.21.3|7.22.7")
     let sb_sfx_beep = feedBank("8.1.1|8.2.2|8.3.1")
@@ -810,7 +811,6 @@ namespace notLegos {
     let sb_sfx_slash = feedBank("8.31.1|8.32.1|8.33.1|8.34.1|8.35.1|8.36.1|8.37.1|8.38.1|8.39.1|8.40.1|8.41.1|8.42.2")
     let sb_sfx_zap = feedBank("8.43.1|8.44.1|8.45.2|8.46.1|8.47.2|8.48.1")
     let sb_sfx_splash = feedBank("8.49.2|8.50.2|8.51.1|8.52.1|8.53.2|8.54.1|8.55.2|8.56.1|8.57.2")
-    let sb_music_intro = feedBank("9.1.3|9.2.4|9.3.8|9.4.5|9.5.4|9.6.12|9.7.3|9.8.7|9.9.6|9.10.7|9.11.9|9.12.9|9.13.11|9.14.3|9.15.10|9.16.3|9.17.6|9.18.5|9.19.6|9.20.5|9.21.7|9.22.5|9.23.3|9.24.7|9.25.6|9.26.6|9.27.11|9.28.5|9.29.5|9.30.4|9.31.6|9.32.4|9.33.4|9.34.10|9.35.8|9.36.8|9.37.3|9.38.7|9.39.4|9.40.6|9.41.3|9.42.7|9.43.7|9.44.3|9.45.6|9.46.1|9.47.2|9.48.2|9.49.8|9.50.16|9.51.9|9.52.10|9.53.13|9.54.14|9.55.14|9.56.16|9.57.7|9.58.4|9.59.9|9.60.8|9.61.9|9.62.9|9.63.12|9.64.4|9.65.6|9.66.9|9.67.5|9.68.6|9.69.5|9.70.10|9.71.8|9.72.8|9.73.5|9.74.3")
     let sb_sfx_voice = feedBank("10.1.4|10.2.6|10.3.4|10.4.4|10.5.6|10.6.4|10.7.11|10.8.6|10.9.4|10.10.1")
     let sb_magician_left_easy = feedBank("11.1.3|11.2.6|11.3.7|11.4.6|11.5.6|11.6.7|11.7.6|11.8.6|11.9.6|11.10.7|11.11.6|11.12.6|11.13.7|11.14.6|11.15.6|11.16.6|11.17.6|11.18.6|11.19.6|11.20.6|11.21.6|11.22.7|11.23.6|11.24.6|11.25.6|11.26.6|11.27.7|11.28.7|11.29.7|11.30.6|11.31.6|11.32.8|11.33.7|11.34.6|11.35.7|11.36.5|11.37.6|11.38.8|11.39.6|11.40.6|11.41.6|11.42.6|11.43.6|11.44.7|11.45.6|11.46.7|11.47.7|11.48.8|11.49.6|11.50.7|11.51.6|11.52.6|11.53.7|11.54.8|11.55.7|11.56.6|11.57.7|11.58.6|11.59.6|11.60.6|11.61.6")
     let sb_magician_left_medium = feedBank("11.62.7|11.63.6|11.64.6|11.65.8|11.66.7|11.67.8|11.68.8|11.69.8|11.70.7|11.71.7|11.72.6|11.73.6|11.74.6|11.75.6|11.76.6|11.77.7|11.78.6|11.79.7|11.80.6|11.81.6|11.82.6|11.83.7|11.84.6|11.85.6|11.86.6|11.87.7|11.88.6|11.89.6|11.90.7|11.91.6|11.92.6|11.93.6|11.94.6|11.95.6|11.96.7|11.97.6|11.98.6|11.99.7|11.100.6|11.101.6|11.102.6|11.103.7|11.104.6|11.105.8|11.106.6|11.107.6|11.108.6|11.109.7|11.110.6|11.111.7|11.112.7|11.113.6|11.114.6|11.115.7|11.116.6|11.117.7|11.118.7|11.119.6|11.120.6|11.121.6|11.122.7|11.123.7|11.124.6|11.125.6|11.126.6|11.127.8|11.128.7|11.129.6|11.130.8|11.131.7|11.132.6|11.133.7|11.134.6|11.135.6|11.136.7|11.137.7")
@@ -865,6 +865,9 @@ namespace notLegos {
     let playlist_mario_failure = makePlaylist(sb_mario_failure)
     let playlist_mario_lost = makePlaylist(sb_mario_lost)
     let playlist_mario_hurry = makePlaylist(sb_mario_hurry)
+    let playtimeMusic = 0
+    let playtimePlayer = 0
+    let playtimeSfxVoice = 0
 
     function takeRotate(PlaylistIn: number[]) {
         let returnTrack = PlaylistIn.shift()
@@ -892,20 +895,47 @@ namespace notLegos {
         return returnList
     }
     function bankPlay(mp3bit:mp3type, SoundBank: number[][], trackIndex: number) {
+        let theSong = SoundBank[trackIndex]
         if (mp3bit == mp3type.music) {
             serial.redirect(mp3musicPin, SerialPin.USB_RX, BaudRate.BaudRate9600)
+            playtimeMusic = theSong[2]
         } else if (mp3bit == mp3type.player) {
             serial.redirect(mp3playerPin, SerialPin.USB_RX, BaudRate.BaudRate9600)
+            playtimePlayer = theSong[2]
         } else if (mp3bit == mp3type.sfxvoice) {
             serial.redirect(mp3sfxPin, SerialPin.USB_RX, BaudRate.BaudRate9600)
+            playtimeSfxVoice = theSong[2]
         }
-        let theSong = SoundBank[trackIndex]
         dataArr[3] = 15
         dataArr[5] = theSong[0]
         dataArr[6] = theSong[1]
         mp3_checkSum()
         mp3_sendDataFast()
     }
+
+
+    //% blockId=NL_MP3_PlaytimeMusic
+    //% subcategory="MP3" group="MP3"
+    //% block="duration of music"
+    export function mp3durationMusic(): number{
+        return playtimeMusic
+    }
+
+    //% blockId=NL_MP3_PlaytimePlayer
+    //% subcategory="MP3" group="MP3"
+    //% block="duration of player sound"
+    export function mp3durationPlayer(): number {
+        return playtimePlayer
+    }
+
+    //% blockId=NL_MP3_PlaytimeSFX
+    //% subcategory="MP3" group="MP3"
+    //% block="duration of sfx/voice"
+    export function mp3durationSfxVoice(): number {
+        return playtimeSfxVoice
+    }
+
+
 
     //% blockId=NL_MP3_MusicPlay
     //% subcategory="MP3" group="MP3"
@@ -970,7 +1000,7 @@ namespace notLegos {
         } else if (voice == voiceSaying.gameover) {
 
         } else if (voice == voiceSaying.welcome) {
-
+            bankPlay(mp3type.sfxvoice, sb_sfx_voice, 0)
         } else if (voice == voiceSaying.intro) {
 
         } else if (voice == voiceSaying.howto1) {
@@ -1022,21 +1052,21 @@ namespace notLegos {
     //% block="Play %sfx sound effect"
     export function mp3sfxPlay(sfx: sfxType): void {
         if(sfx == sfxType.correct){
-
+            bankPlay(mp3type.sfxvoice, sb_sfx_correct, takeRotate(playlist_correct))
         }else if (sfx == sfxType.incorrect){
-
+            bankPlay(mp3type.sfxvoice, sb_sfx_incorrect, takeRotate(playlist_incorrect))
         }else if (sfx == sfxType.ghost){
-
+            bankPlay(mp3type.sfxvoice, sb_sfx_ghost, takeRotate(playlist_ghost))
         }else if (sfx == sfxType.fire){
-
+            bankPlay(mp3type.sfxvoice, sb_sfx_fire, takeRotate(playlist_fire))
         }else if (sfx == sfxType.explosion){
-
+            bankPlay(mp3type.sfxvoice, sb_sfx_boom, takeRotate(playlist_boom))
         }else if (sfx == sfxType.splash){
-
+            bankPlay(mp3type.sfxvoice, sb_sfx_splash, takeRotate(playlist_splash))
         } else if (sfx == sfxType.spark) {
-
+            bankPlay(mp3type.sfxvoice, sb_sfx_zap, takeRotate(playlist_zap))
         } else if (sfx == sfxType.slash) {
-
+            bankPlay(mp3type.sfxvoice, sb_sfx_slash, takeRotate(playlist_slash))
         }
     }
 /// END SOUND BANK ///
