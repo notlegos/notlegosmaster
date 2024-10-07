@@ -670,7 +670,7 @@ namespace notLegos {
         if (mp3bit == mp3type.music) {
             mp3musicPin = sPin
             mp3music = true
-            mp3musicVol = 60
+            mp3musicVol = 100
             setVolume(mp3type.music, mp3musicVol)
         } else if (mp3bit == mp3type.player) {
             mp3playerPin = sPin
@@ -680,7 +680,7 @@ namespace notLegos {
         } else if (mp3bit == mp3type.sfxvoice) {
             mp3sfxPin = sPin
             mp3sfx = true
-            mp3sfxVol = 80
+            mp3sfxVol = 100
             setVolume(mp3type.sfxvoice, mp3sfxVol)
         }   
     }
@@ -690,12 +690,8 @@ namespace notLegos {
     //% subcategory=MP3 group="MP3"
     export function sendMP3fileFolder(folderNum: string, fileNum: string, sPin: SerialPin): void {
         serial.redirect(sPin, SerialPin.USB_RX, BaudRate.BaudRate9600)
-        CMD = 15
-        para1 = parseInt(folderNum)
-        para2 = parseInt(fileNum)
-        dataArr[3] = CMD
-        dataArr[5] = para1
-        dataArr[6] = para2
+        dataArr[5] = parseInt(folderNum)
+        dataArr[6] = parseInt(fileNum)
         mp3_checkSum()
         mp3_sendDataFast()
     }
@@ -720,8 +716,8 @@ namespace notLegos {
         if (masterVolume != nowVol){
             masterVolume = nowVol
             setVolume(mp3type.music, mp3musicVol)
-            //setVolume(mp3type.player, mp3playerVol)
-            //setVolume(mp3type.sfxvoice, mp3sfxVol)
+            setVolume(mp3type.player, mp3playerVol)
+            setVolume(mp3type.sfxvoice, mp3sfxVol)
         }
     }
 
@@ -729,24 +725,19 @@ namespace notLegos {
     //% subcategory="MP3" group="MP3"
     //% block="Set %mp3bit volume to %vol"
     export function setVolume(mp3bit:mp3type, vol:number): void {
-        let theVolume = 0
         if (mp3bit == mp3type.music) {
             serial.redirect(mp3musicPin, SerialPin.USB_RX, BaudRate.BaudRate9600)
             mp3musicVol = vol
         } else if (mp3bit == mp3type.player) {
-            //serial.redirect(mp3playerPin, SerialPin.USB_RX, BaudRate.BaudRate9600)
+            serial.redirect(mp3playerPin, SerialPin.USB_RX, BaudRate.BaudRate9600)
             mp3playerVol = vol
         } else if (mp3bit == mp3type.sfxvoice) {
-            //serial.redirect(mp3sfxPin, SerialPin.USB_RX, BaudRate.BaudRate9600)
+            serial.redirect(mp3sfxPin, SerialPin.USB_RX, BaudRate.BaudRate9600)
             mp3sfxVol = vol
         }
-        theVolume = Math.round(vol/100 * masterVolume)
-        CMD = 6
-        para1 = 0
-        para2 = theVolume
-        dataArr[3] = CMD
-        dataArr[5] = para1
-        dataArr[6] = para2
+        dataArr[3] = 6
+        dataArr[5] = 0
+        dataArr[6] = Math.round(vol / 100 * masterVolume)
         mp3_checkSum()
         mp3_sendDataFast()
     }
@@ -1085,7 +1076,7 @@ namespace notLegos {
     let servo_oarrack_min = 60; let servo_oarrack_max = 110
     let servo_ghost_min = 110; let servo_ghost_max = 40
     let servo_shell_min = 170; let servo_shell_max = 100
-    let servo_door_min = 50; let servo_door_max = 140
+    let servo_door_min = 50; let servo_door_max = 140; let servo_door_mid = 100
     let motor_fan_min = 0; let motor_fan_mid = 12; let motor_fan_max = 15
     let servo_dragon_min = 90; let servo_dragon_max = 79
 
@@ -1136,6 +1127,7 @@ namespace notLegos {
         } if (motor == motors.door) {
             if (state == motorState.min) { servoSet(motor, servo_door_min) }
             else if (state == motorState.max) { servoSet(motor, servo_door_max) }
+            else if (state == motorState.mid) { servoSet(motor, servo_door_mid) }
         } if (motor == motors.dragon) {
             if (state == motorState.min) { servoSet(motor, servo_dragon_min) }
             else if (state == motorState.max) { servoSet(motor, servo_dragon_max) }

@@ -23,8 +23,10 @@ radio.onReceivedValue(function (name, value) {
         if (isCastleSay) {
             if (theName == "wstar") {
                 castleMode = "wait_start"
-            } else if (theName == "para") {
-                notLegos.setEffect(notLegos.vfxRegion.CastleSayAll, notLegos.vfxEffect.parade)
+            } else if (theName == "welco") {
+                notLegos.vfxReset(notLegos.vfxEffect.glow)
+                notLegos.setEffect(notLegos.vfxRegion.CastleSayAll, notLegos.vfxEffect.glow)
+                notLegos.mp3voicePlay(notLegos.voiceSaying.welcome)
             } else if (theName == "check") {
                 notLegos.setEffect(notLegos.vfxRegion.CastleSayAll, notLegos.vfxEffect.off)
                 radioSay("ready", 1)
@@ -36,9 +38,21 @@ radio.onReceivedValue(function (name, value) {
                 radioSay("wstar", 1)
                 notLegos.setEffect(notLegos.vfxRegion.KongFront, notLegos.vfxEffect.indicate)
             } else if (theName == "boot") {
+                fogLevel = 3
+                notLegos.setEffect(notLegos.vfxRegion.CastleDoAll, notLegos.vfxEffect.parade)
+                notLegos.motorSet(notLegos.motors.wheel, notLegos.motorState.max)
+                basic.pause(value * 1000)
+                notLegos.motorSet(notLegos.motors.wheel, notLegos.motorState.min)
+                basic.pause(1000)
+                radioSay("welco", 1)
                 notLegos.vfxReset(notLegos.vfxEffect.glow)
                 notLegos.setEffect(notLegos.vfxRegion.CastleDoAll, notLegos.vfxEffect.glow)
-                fogFlood()
+                fogLevel = 1
+                notLegos.motorSet(notLegos.motors.door, notLegos.motorState.mid)
+            } else if (theName == "welco") {
+            	
+            } else if (false) {
+            	
             } else {
             	
             }
@@ -48,7 +62,9 @@ radio.onReceivedValue(function (name, value) {
 })
 input.onLogoEvent(TouchButtonEvent.Touched, function () {
     if (isCastleSay) {
+        notLegos.mp3sayPlay(notLegos.playerSaying.ready)
         notLegos.mp3sfxPlay(notLegos.sfxType.fire)
+        notLegos.mp3musicPlay(notLegos.musicGenre.intro)
     }
 })
 function fogFlood () {
@@ -105,6 +121,7 @@ function fogFlood () {
         notLegos.motorSet(notLegos.motors.dragon, notLegos.motorState.min)
     }
 }
+let buttonRow = 0
 let iTook = 0
 let theName = ""
 let castleMode = ""
@@ -128,7 +145,6 @@ lastLaserR = 0
 lastLaserL = 0
 lastLaserC = 0
 lastHunt = 0
-let buttonRow = 0
 fogToggle = false
 fogLevel = 0
 btToken = "KC$"
@@ -138,22 +154,18 @@ isCastleSay = notLegos.SonarFirstRead(DigitalPin.P8, DigitalPin.P9) > 0
 radio.setGroup(171)
 notLegos.oledinit()
 if (isCastleSay) {
-    pins.digitalWritePin(DigitalPin.P5, 1)
     notLegos.potSet(AnalogPin.P10)
     digits = Connected.tm1637Create(
     DigitalPin.P7,
     DigitalPin.P6
     )
+    pins.digitalWritePin(DigitalPin.P13, 1)
     notLegos.mp3setPorts(notLegos.mp3type.music, SerialPin.P14)
     notLegos.mp3setPorts(notLegos.mp3type.sfxvoice, SerialPin.P15)
     notLegos.mp3setPorts(notLegos.mp3type.player, SerialPin.P16)
+    notLegos.castleSayLights(DigitalPin.P11, DigitalPin.P5, DigitalPin.P12)
     basic.pause(20)
-    notLegos.setVolume(notLegos.mp3type.music, 100)
-    notLegos.setVolume(notLegos.mp3type.player, 100)
-    notLegos.setVolume(notLegos.mp3type.sfxvoice, 100)
-    basic.pause(20)
-    notLegos.updateVolumeGlobal()
-    notLegos.castleSayLights(DigitalPin.P11, DigitalPin.P12, DigitalPin.P13)
+    notLegos.setVolume(notLegos.mp3type.sfxvoice, 91)
 } else {
     pins.digitalWritePin(DigitalPin.P2, 1)
     pins.digitalWritePin(DigitalPin.P8, 1)
@@ -175,11 +187,16 @@ if (isCastleSay) {
 let iBegan = input.runningTimeMicros()
 let isReady = true
 castleMode = "init"
+loops.everyInterval(10000, function () {
+	
+})
 loops.everyInterval(500, function () {
     if (isCastleSay) {
         notLegos.updateVolumeGlobal()
     } else {
-        if (fogToggle && fogLevel != 0) {
+        if (!(fogToggle) || fogLevel == 0) {
+            notLegos.setFog(notLegos.fogLevels.none)
+        } else {
             if (fogLevel == 1) {
                 notLegos.setFog(notLegos.fogLevels.light)
             } else if (fogLevel == 2) {
@@ -187,8 +204,6 @@ loops.everyInterval(500, function () {
             } else if (fogLevel == 3) {
                 notLegos.setFog(notLegos.fogLevels.heavy)
             }
-        } else {
-            notLegos.setFog(notLegos.fogLevels.none)
         }
     }
 })
@@ -210,21 +225,18 @@ loops.everyInterval(40, function () {
             if (castleMode == "wait_start") {
                 if (lastHunt == 1) {
                     castleMode = "idle"
-                    radioSay("boot", 1)
-                    notLegos.vfxReset(notLegos.vfxEffect.glow)
-                    notLegos.setEffect(notLegos.vfxRegion.CastleSayAll, notLegos.vfxEffect.glow)
                     notLegos.mp3musicPlay(notLegos.musicGenre.intro)
-                    basic.pause(notLegos.mp3durationMusic() * 1000)
-                    notLegos.mp3voicePlay(notLegos.voiceSaying.welcome)
+                    notLegos.setEffect(notLegos.vfxRegion.CastleSayAll, notLegos.vfxEffect.parade)
+                    radioSay("boot", notLegos.mp3durationMusic())
                 }
-            } else if (castleMode == "wait_reg") {
-            	
             } else if (castleMode == "wait_play") {
             	
             } else if (castleMode == "wait_laser") {
             	
             } else if (castleMode == "init") {
                 radioSay("ready", 1)
+            } else if (castleMode == "wait_reg") {
+            	
             }
         } else {
             notLegos.castleDoTick()
@@ -251,15 +263,4 @@ loops.everyInterval(40, function () {
     ready_oled()
     notLegos.changeThree()
     iTook = input.runningTime() - iBegan
-})
-loops.everyInterval(7000, function () {
-    if (!(isCastleSay) && (fogLevel == 1 && fogToggle)) {
-        notLegos.motorSet(notLegos.motors.fan, notLegos.motorState.max)
-        basic.pause(600)
-        notLegos.motorSet(notLegos.motors.fan, notLegos.motorState.mid)
-        basic.pause(500)
-        notLegos.motorSet(notLegos.motors.fan, notLegos.motorState.min)
-        basic.pause(500)
-        notLegos.motorSet(notLegos.motors.fan, notLegos.motorState.off)
-    }
 })
