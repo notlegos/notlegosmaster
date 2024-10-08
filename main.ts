@@ -5,6 +5,27 @@ function radioSay (text5: string, val: number) {
 function buttonPress (button: string) {
     notLegos.printLine("button: " + button, 3)
 }
+function runTutorial () {
+    radioSay("tutor", 1)
+    notLegos.setVolume(notLegos.mp3type.music, 80)
+    basic.pause(20)
+    notLegos.mp3musicPlay(notLegos.musicGenre.tutorial)
+    fogLevel = 3
+    notLegos.mp3voicePlay(notLegos.voiceSaying.howto1)
+    basic.pause(5950)
+    notLegos.mp3voicePlay(notLegos.voiceSaying.howto2)
+    basic.pause(5000)
+    notLegos.mp3voicePlay(notLegos.voiceSaying.howto3)
+    basic.pause(7600)
+    notLegos.mp3voicePlay(notLegos.voiceSaying.howto4)
+    basic.pause(6100)
+    notLegos.mp3voicePlay(notLegos.voiceSaying.howto5)
+    basic.pause(13000)
+    notLegos.mp3voicePlay(notLegos.voiceSaying.howto6)
+    notLegos.setVolume(notLegos.mp3type.music, 100)
+    basic.pause(7000)
+    notLegos.mp3musicPlay(notLegos.musicGenre.awaiting)
+}
 function ready_oled () {
     if (isCastleSay) {
         notLegos.printLine("// Castle Say //", 0)
@@ -24,9 +45,21 @@ radio.onReceivedValue(function (name, value) {
             if (theName == "wstar") {
                 castleMode = "wait_start"
             } else if (theName == "welco") {
-                notLegos.vfxReset(notLegos.vfxEffect.glow)
-                notLegos.setEffect(notLegos.vfxRegion.CastleSayAll, notLegos.vfxEffect.glow)
-                notLegos.mp3voicePlay(notLegos.voiceSaying.welcome)
+                if (value == 1) {
+                    notLegos.vfxReset(notLegos.vfxEffect.glow)
+                    notLegos.setEffect(notLegos.vfxRegion.CastleSayAll, notLegos.vfxEffect.glow)
+                    notLegos.mp3voicePlay(notLegos.voiceSaying.welcome)
+                } else if (value == 2) {
+                    notLegos.setEffect(notLegos.vfxRegion.CastleSayAll, notLegos.vfxEffect.off)
+                    notLegos.setEffect(notLegos.vfxRegion.WheelAll, notLegos.vfxEffect.fire)
+                    basic.pause(1200)
+                    notLegos.mp3voicePlay(notLegos.voiceSaying.intro)
+                    basic.pause(3000)
+                    notLegos.setEffect(notLegos.vfxRegion.CastleSayAll, notLegos.vfxEffect.off)
+                    basic.pause(4000)
+                    notLegos.mp3musicPlay(notLegos.musicGenre.awaiting)
+                    castleMode = "wait_reg"
+                }
             } else if (theName == "check") {
                 notLegos.setEffect(notLegos.vfxRegion.CastleSayAll, notLegos.vfxEffect.off)
                 radioSay("ready", 1)
@@ -45,13 +78,38 @@ radio.onReceivedValue(function (name, value) {
                 notLegos.motorSet(notLegos.motors.wheel, notLegos.motorState.min)
                 basic.pause(1000)
                 radioSay("welco", 1)
+                basic.pause(200)
                 notLegos.vfxReset(notLegos.vfxEffect.glow)
                 notLegos.setEffect(notLegos.vfxRegion.CastleDoAll, notLegos.vfxEffect.glow)
+                basic.pause(5000)
+                notLegos.setEffect(notLegos.vfxRegion.CastleDoAll, notLegos.vfxEffect.idle)
+                notLegos.setEffect(notLegos.vfxRegion.SpotH, notLegos.vfxEffect.mine)
+                notLegos.setEffect(notLegos.vfxRegion.SpotI, notLegos.vfxEffect.mine)
+                basic.pause(0)
+                radioSay("welco", 2)
+                basic.pause(4500)
+                notLegos.setEffect(notLegos.vfxRegion.CastleDoAll, notLegos.vfxEffect.off)
+                basic.pause(500)
+                notLegos.setEffect(notLegos.vfxRegion.BrickDragon, notLegos.vfxEffect.indicate)
+                basic.pause(1200)
+                notLegos.setEffect(notLegos.vfxRegion.SpotC, notLegos.vfxEffect.indicate)
+                notLegos.setEffect(notLegos.vfxRegion.SpotE, notLegos.vfxEffect.indicate)
+                basic.pause(3000)
                 fogLevel = 1
-                notLegos.motorSet(notLegos.motors.door, notLegos.motorState.mid)
+                notLegos.motorSet(notLegos.motors.door, notLegos.motorState.max)
+            } else if (theName == "tutor") {
+                if (value == 1) {
+                    notLegos.setEffect(notLegos.vfxRegion.CastleDoAll, notLegos.vfxEffect.off)
+                    basic.pause(4000)
+                    notLegos.vfxReset(notLegos.vfxEffect.glow)
+                    notLegos.setEffect(notLegos.vfxRegion.SpotA, notLegos.vfxEffect.glow)
+                    basic.pause(6000)
+                    notLegos.setEffect(notLegos.vfxRegion.SpotB, notLegos.vfxEffect.indicate)
+                    notLegos.setEffect(notLegos.vfxRegion.SpotC, notLegos.vfxEffect.indicate)
+                } else if (value == 2) {
+                	
+                }
             } else if (theName == "welco") {
-            	
-            } else if (false) {
             	
             } else {
             	
@@ -165,7 +223,9 @@ if (isCastleSay) {
     notLegos.mp3setPorts(notLegos.mp3type.player, SerialPin.P16)
     notLegos.castleSayLights(DigitalPin.P11, DigitalPin.P5, DigitalPin.P12)
     basic.pause(20)
-    notLegos.setVolume(notLegos.mp3type.sfxvoice, 91)
+    notLegos.setVolume(notLegos.mp3type.sfxvoice, 100)
+    notLegos.setVolume(notLegos.mp3type.player, 100)
+    notLegos.setVolume(notLegos.mp3type.music, 100)
 } else {
     pins.digitalWritePin(DigitalPin.P2, 1)
     pins.digitalWritePin(DigitalPin.P8, 1)
@@ -187,9 +247,6 @@ if (isCastleSay) {
 let iBegan = input.runningTimeMicros()
 let isReady = true
 castleMode = "init"
-loops.everyInterval(10000, function () {
-	
-})
 loops.everyInterval(500, function () {
     if (isCastleSay) {
         notLegos.updateVolumeGlobal()
@@ -236,7 +293,12 @@ loops.everyInterval(40, function () {
             } else if (castleMode == "init") {
                 radioSay("ready", 1)
             } else if (castleMode == "wait_reg") {
-            	
+                if (lastGesture != 0) {
+                    castleMode = "tutorial"
+                    runTutorial()
+                } else if (false) {
+                	
+                }
             }
         } else {
             notLegos.castleDoTick()

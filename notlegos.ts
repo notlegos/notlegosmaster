@@ -993,23 +993,23 @@ namespace notLegos {
         } else if (voice == voiceSaying.welcome) {
             bankPlay(mp3type.sfxvoice, sb_sfx_voice, 0)
         } else if (voice == voiceSaying.intro) {
-
+            bankPlay(mp3type.sfxvoice, sb_sfx_voice, 1)
         } else if (voice == voiceSaying.howto1) {
-
+            bankPlay(mp3type.sfxvoice, sb_sfx_voice, 2)
         } else if (voice == voiceSaying.howto2) {
-
+            bankPlay(mp3type.sfxvoice, sb_sfx_voice, 3)
         } else if (voice == voiceSaying.howto3) {
-
+            bankPlay(mp3type.sfxvoice, sb_sfx_voice, 4)
         } else if (voice == voiceSaying.howto4) {
-
+            bankPlay(mp3type.sfxvoice, sb_sfx_voice, 5)
         } else if (voice == voiceSaying.howto5) {
-
+            bankPlay(mp3type.sfxvoice, sb_sfx_voice, 6)
         } else if (voice == voiceSaying.howto6) {
-
+            bankPlay(mp3type.sfxvoice, sb_sfx_voice, 7)
         } else if (voice == voiceSaying.howto7) {
-
+            bankPlay(mp3type.sfxvoice, sb_sfx_voice, 8)
         } else if (voice == voiceSaying.howto8) {
-
+            bankPlay(mp3type.sfxvoice, sb_sfx_voice, 9)
         } else if (voice == voiceSaying.howto9) {
 
         }
