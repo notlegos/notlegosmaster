@@ -183,7 +183,7 @@ let buttonRow = 0
 let iTook = 0
 let theName = ""
 let castleMode = ""
-let digits: Connected.TM1637LEDs = null
+let digits: notLegos.TM1637LEDs = null
 let isCastleSay = false
 let btToken = ""
 let fogLevel = 0
@@ -213,10 +213,11 @@ radio.setGroup(171)
 notLegos.oledinit()
 if (isCastleSay) {
     notLegos.potSet(AnalogPin.P10)
-    digits = Connected.tm1637Create(
+    digits = notLegos.tm1637Create(
     DigitalPin.P7,
     DigitalPin.P6
     )
+    digits.showNumber(314)
     pins.digitalWritePin(DigitalPin.P13, 1)
     notLegos.mp3setPorts(notLegos.mp3type.music, SerialPin.P14)
     notLegos.mp3setPorts(notLegos.mp3type.sfxvoice, SerialPin.P15)
