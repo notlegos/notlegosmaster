@@ -213,11 +213,8 @@ radio.setGroup(171)
 notLegos.oledinit()
 if (isCastleSay) {
     notLegos.potSet(AnalogPin.P10)
-    digits = notLegos.tm1637Create(
-    DigitalPin.P7,
-    DigitalPin.P6
-    )
-    digits.showNumber(314)
+    digits = notLegos.tm1637Create(DigitalPin.P7, DigitalPin.P6)
+    digits.showNumber(-1000)
     pins.digitalWritePin(DigitalPin.P13, 1)
     notLegos.mp3setPorts(notLegos.mp3type.music, SerialPin.P14)
     notLegos.mp3setPorts(notLegos.mp3type.sfxvoice, SerialPin.P15)
@@ -228,10 +225,12 @@ if (isCastleSay) {
     notLegos.setVolume(notLegos.mp3type.player, 100)
     notLegos.setVolume(notLegos.mp3type.music, 100)
 } else {
+    pins.digitalWritePin(DigitalPin.P0, 0)
     pins.digitalWritePin(DigitalPin.P2, 1)
     pins.digitalWritePin(DigitalPin.P8, 1)
     pins.digitalWritePin(DigitalPin.P12, 1)
     pins.digitalWritePin(DigitalPin.P13, 1)
+    notLegos.motorSet(notLegos.motors.fan, notLegos.motorState.max)
     notLegos.motorSet(notLegos.motors.redrack, notLegos.motorState.min)
     notLegos.motorSet(notLegos.motors.shark, notLegos.motorState.min)
     notLegos.motorSet(notLegos.motors.ghost, notLegos.motorState.min)
@@ -241,7 +240,6 @@ if (isCastleSay) {
     notLegos.motorSet(notLegos.motors.door, notLegos.motorState.min)
     notLegos.motorSet(notLegos.motors.dragon, notLegos.motorState.min)
     notLegos.motorSet(notLegos.motors.wheel, notLegos.motorState.min)
-    notLegos.motorSet(notLegos.motors.fan, notLegos.motorState.min)
     notLegos.castleDoLights(DigitalPin.P14, DigitalPin.P15, DigitalPin.P16)
     radioSay("check", 1)
 }
@@ -264,6 +262,9 @@ loops.everyInterval(500, function () {
             }
         }
     }
+})
+loops.everyInterval(500, function () {
+	
 })
 loops.everyInterval(2000, function () {
     notLegos.printLine("" + iTook + "", 5)
@@ -303,7 +304,7 @@ loops.everyInterval(40, function () {
             }
         } else {
             notLegos.castleDoTick()
-            fogToggle = pins.analogReadPin(AnalogReadWritePin.P0) <= 90
+            fogToggle = true
             buttonRow = pins.analogReadPin(AnalogReadWritePin.P1)
             if (buttonRow < 10) {
                 buttonPress("A")

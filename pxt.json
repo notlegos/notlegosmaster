@@ -10,7 +10,6 @@
         "main.ts",
         "README.md",
         "displaySendBuffer.asm",
-        "display.ts",
         "planetxbasic.ts",
         "notlegos.ts"
     ],

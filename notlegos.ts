@@ -1077,7 +1077,7 @@ namespace notLegos {
     let servo_ghost_min = 110; let servo_ghost_max = 40
     let servo_shell_min = 170; let servo_shell_max = 100
     let servo_door_min = 50; let servo_door_max = 140; let servo_door_mid = 100
-    let motor_fan_min = 0; let motor_fan_mid = 12; let motor_fan_max = 15
+    let motor_fan_min = 0; let motor_fan_mid = 50; let motor_fan_max = 100
     let servo_dragon_min = 90; let servo_dragon_max = 79
 
     export function servoSet(servo: motors, angle: number): void {
@@ -1288,20 +1288,15 @@ namespace notLegos {
 
 /// BEGIN DIGITS
 
-    let TM1637_CMD1 = 0x40;
-    let TM1637_CMD2 = 0xC0;
-    let TM1637_CMD3 = 0x80;
     let _SEGMENTS = [0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F, 0x77, 0x7C, 0x39, 0x5E, 0x79, 0x71];
 
-    //% blockId=nl_digits_create block="connect 4-Digit cPin %cPin dPin %dPin"
+    //% blockId=nl_digits_create block="4-Digit cPin %cPin dPin %dPin"
     //% subcategory="Display" group="Display"
-    export function tm1637Create(cPin: DigitalPin, dPin: DigitalPin, intensity: number = 7, count: number = 4): TM1637LEDs {
+    export function tm1637Create(cPin: DigitalPin, dPin: DigitalPin): TM1637LEDs {
         let display = new TM1637LEDs();
         display.clk = cPin
         display.dio = dPin
-        if ((count < 1) || (count > 5)) count = 4;
-        display.count = count;
-        display.brightness = intensity;
+        display.brightness = 7;
         display.init();
         return display;
     }
@@ -1311,12 +1306,11 @@ namespace notLegos {
         dio: DigitalPin;
         _ON: number;
         brightness: number;
-        count: number;  // number of LEDs
         init(): void {
             pins.digitalWritePin(this.clk, 0);
             pins.digitalWritePin(this.dio, 0);
             this._ON = 8;
-            this.buf = pins.createBuffer(this.count);
+            this.buf = pins.createBuffer(4);
             this.clear();
         }
         _start() {
@@ -1330,12 +1324,12 @@ namespace notLegos {
         }
         _write_data_cmd() {
             this._start();
-            this._write_byte(TM1637_CMD1);
+            this._write_byte(0x40);
             this._stop();
         }
         _write_dsp_ctrl() {
             this._start();
-            this._write_byte(TM1637_CMD3 | this._ON | this.brightness);
+            this._write_byte(0x80 | this._ON | this.brightness);
             this._stop();
         }
         _write_byte(b: number) {
@@ -1356,7 +1350,7 @@ namespace notLegos {
         _dat(bit: number, dat: number) {
             this._write_data_cmd();
             this._start();
-            this._write_byte(TM1637_CMD2 | (bit % this.count))
+            this._write_byte(0xC0 | (bit % 4))
             this._write_byte(dat);
             this._stop();
             this._write_dsp_ctrl();
@@ -1367,7 +1361,7 @@ namespace notLegos {
         //% bit.defl=1 bit.min=0 bit.max=9
         showbit(num: number = 5, bit: number = 0) {
             bit = Math.map(bit, 4, 1, 0, 3)
-            this.buf[bit % this.count] = _SEGMENTS[num % 16]
+            this.buf[bit % 4] = _SEGMENTS[num % 16]
             this._dat(bit, _SEGMENTS[num % 16])
         }
 
@@ -1381,6 +1375,7 @@ namespace notLegos {
                 this.showbit(Math.idiv(num, 10) % 10, 2)
                 this.showbit(Math.idiv(num, 100) % 10, 3)
                 this._dat(0, 0x40) // '-'
+                // this._dat(0, 0) // blank
             }
             else {
                 this.showbit(Math.idiv(num, 1000) % 10)
@@ -1390,20 +1385,10 @@ namespace notLegos {
             }
         }
 
-        //% blockId="nl_digits_decimal" block="%display|DotPoint at %bit|show $show"
-        //% show.shadow="toggleOnOff"
-        //% subcategory="Display" group="Display"
-        showDP(bit: number = 1, show: boolean = true) {
-            bit = Math.map(bit, 4, 1, 0, 3)
-            bit = bit % this.count
-            if (show) this._dat(bit, this.buf[bit] | 0x80)
-            else this._dat(bit, this.buf[bit] & 0x7F)
-        }
-
         //% blockId="nl_digits_clear" block="clear display %display"
         //% subcategory="Display" group="Display"
         clear() {
-            for (let i = 0; i < this.count; i++) {
+            for (let i = 0; i < 4; i++) {
                 this._dat(i, 0)
                 this.buf[i] = 0
             }
